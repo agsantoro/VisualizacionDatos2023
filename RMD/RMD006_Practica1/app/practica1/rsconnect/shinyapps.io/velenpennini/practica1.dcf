@@ -1,0 +1,12 @@
+name: practica1
+title: practica1
+username: velenpennini
+account: velenpennini
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9662968
+bundleId: 7601195
+url: https://velenpennini.shinyapps.io/practica1/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

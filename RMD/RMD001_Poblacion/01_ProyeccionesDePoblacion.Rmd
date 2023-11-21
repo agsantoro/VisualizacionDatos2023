@@ -1,0 +1,337 @@
+---
+title: "Procesamiento de proyecciones de población de Argentina 2010-2040 (INDEC)"
+author: 
+ - Adrián Santoro^[adrian.santoro@gmail.com]
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cosmo
+    toc: yes
+    toc_float:
+      collapsed: true
+bibliography: references.bib
+link-citations: true
+theme: united
+---
+
+
+
+```{r klippy, echo=FALSE, include=TRUE}
+library(klippy)
+klippy::klippy(position=c("top","right"),
+               tooltip_message = "Copiar código",
+               tooltip_success = "Copiado!",
+               color = "#636363")
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Proyecciones de población
+
+El [**Instituto Nacional de Estadística y Censos (INDEC)**](https://www.indec.gob.ar) es el encargado de elaborar la proyecciones de población en Argentina, en base a los censos de población, hogares y vivienda.
+
+La serie de proyecciones más actualizada es la desarrollada en base al Censo Nacional de Población, Hogares y Viviendas 2010 y se encuentra disponible en <https://www.indec.gob.ar/indec/web/Nivel4-Tema-2-24-85>
+
+El material publicado en el sitio web del Instituto aparece en dos formatos disponibles para descarga: 
+
++ Documento .pdf 
++ Planilla de cálculos .xls
+
+Ambos formatos resultan habitualmente poco amigables para docentes, investigadores y usuarios relacionados con la estadística y la ciencia de datos. En primer lugar, el formato .pdf resulta adecuado para la impresión del documento y su visualización, pero no para la utilización de los datos en softwares de procesamiento. Por otro lado, las planillas .xls disponibles presentan un diseño en tabulados contiguos, fragmentados en distintas hojas (cada una representa a las jurisdicción diferente), lo que torna muy laborioso reconstruir series temporales sin un trabajo arduo de copiado y pegado que aumenta el riesgo de cometer errores.
+
+<br/>
+
+## Objetivo
+
+El objetivo de este documento es presentar una forma programática de procesamiento de las proyecciones de poblacion 2010-2040 publicadas por el INDEC, usando el software estadístico R [@R-base] con sus librerías dplyr [@dplyr], shiny [@Shiny], openxlsx [@openxlsx] y readxl [@readxl].
+
+<br/>
+
+## Desarrollo
+
+### 1- Instalar y cargar librerías
+
+Como se mencionó más arriba, se utilizarán las librerías dplyr, openxl y readxl, que deben estar previamente instaladas.
+
+```{r eval=FALSE}
+
+# chequeamos si las librerías están instaladas y si es necesario se instalan
+if ("readxl" %in% installed.packages()[,"Package"]) {library(readxl)} else {install.packages("readxl");library(readxl)}
+if ("openxlsx" %in% installed.packages()[,"Package"]) {library(openxlsx)} else {install.packages("openxlsx");library(openxlsx)}
+if ("highcharter" %in% installed.packages()[,"Package"]) {library(highcharter)} else {install.packages("highcharter");library(highcharter)}
+
+```
+
+
+
+### 2- Descargar proyecciones de población en formato .xls de la web del INDEC
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+# descarga del archivo
+url = "https://www.indec.gob.ar/ftp/cuadros/poblacion/c2_proyecciones_prov_2010_2040.xls"
+download.file(url, destfile = "poblacion.xls", mode="wb")
+```
+### 3- Crear una variable con los nombres de las hojas de la planilla descargada
+Esto se puede hacer a través de la función excel_sheets de readxl
+
+```{r}
+sheets = readxl::excel_sheets("poblacion.xls")
+print(sheets)
+```
+Eliminar el nombre de la primera hoja de la planilla en la variable (ya que no contiene información)
+
+```{r}
+sheets = sheets[sheets!="GraphData"]
+```
+
+### 4 - Explorar la planilla descargada y preparar las variables que nos van a ayudar a tabular los datos
+
+Todas las hojas presentan cuadros con la información de interés.
+Cada cuadro ocupa 21 filas y 3 columnas más una vacía utilizada como margen, comenzando el primero en la celda "B8". En cada cuadro se presenta la información de la proyección (por grupos de edad y sexo) para una jurisdicción seleccionada (la de la hoja) y un año seleccionado (indicado en el encabezado de cada cuadro).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+knitr::include_graphics("images/Screenshot_1.png")
+```
+
+
+El diseño de cada hoja (que representa a una jurisdicción) se compone de 5 bloques horizontales de 6 cuadros cada uno y un bloque final (el sexto) de un cuadro.
+Con una secuencia vamos a obtener la columna en la que empieza cada cuadro.
+Identificamos la letra "B" en el vector LETTERS que incluye R. En este caso, la letra "B" es la segunda del vector. Usando esa posición, iremos agregando los múltiplos de 4 hasta completar las 6 columnas.
+
+```{r}
+orden_letra_b = 2
+columnas = LETTERS[seq(orden_letra_b,length(LETTERS), by = 4)][1:6]
+
+print(columnas)
+```
+
+Ahora obtendremos las filas donde empiezan los cuadros. Entre la longitud de los cuadros (21 filas) más los espacios y los totales que no utilizaremos, vemos que cada bloque comienza 28 filas debajo del anterior. Multiplicamos hasta obtener las filas iniciales de cada uno. 
+
+```{r}
+fila_primer_bloque = 8
+fila_ultimo_bloque = 148
+filas = seq(fila_primer_bloque,fila_ultimo_bloque, by = 28)
+print(filas)
+```
+
+Con el comando expand.grid obtendermos todas las combinaciones de fila y columna donde comienzan los cuadros a partir de los dos vectores creados anteriormente.
+
+```{r}
+columnas_y_filas = list(
+  columnas,
+  filas
+)
+
+columnas_y_filas = expand.grid(columnas_y_filas)
+print(columnas_y_filas)
+```
+
+Eliminamos las ultimas 5 combinaciones ya que el último bloque sólo dispone de un cuadro
+
+```{r}
+columnas_y_filas = columnas_y_filas[1:(nrow(columnas_y_filas)-5),] 
+```
+
+Pegamos ambas columnas para obtener los identificadores de celdas tal como los usa Excel
+
+```{r}
+celdas = paste0(columnas_y_filas$Var1,columnas_y_filas$Var2) 
+print(celdas)
+```
+
+**Ya tenemos entonces la lista de todas las celdas que representan la primera celda (arriba y a la izquierda) de cada uno de los bloques donde se encuentran las proyecciones para un año y jurisdicción específicos**
+
+Sumamos ahora unos pasos que servirán para agregar las columnas de jurisdicción, sexo y edad en la tabla final. Creamos un vector con los grupos de edad que utiliza INDEC en las proyecciones. Podemos hacerlo desde el rango A8:A28 de la primera hoja, por ejemplo. Luego, hacemos lo mismo con la variables sexo desde B4:D4 y finalmente creamos un vector con la secuencia de años de las proyecciones (2010 a 2040).
+
+```{r message=FALSE, warning=FALSE}
+
+grupos_de_edad = readxl::read_xls("poblacion.xls", sheet = sheets[1], range = "A8:A28", col_names = F)[[1]] # vector de grupos de edad
+sexo = colnames(readxl::read_xls("poblacion.xls", sheet = sheets[1], range = "B4:D4")) # vector de categorías de sexo
+anos = 2010:2040 # vector de años
+
+print(grupos_de_edad)
+print(sexo)
+print(anos)
+```
+
+Ya tenemos toda la información que necesitamos:
+ 
+ + Las jurisdicciones (a partir de los nombres de las hojas, en la variable **sheets**)
+ + Los grupos de edad (en la variable **grupos_de_edad**)
+ + Las categorías de sexo (en la variable **sexo**)
+ + Las celdas donde empieza cada bloque (en la variable **celdas**)
+
+Con esa información podemos recorrer el archivo e ir extrayendo la información para generar un data frame. Ésta será la tarea más compleja.
+
+### 5 - Crear el data frame
+
+Vamos a hacer ahora un loop que recorra hoja por hoja el archivo y a medida que pase por cada cuadro lo agregue a un data frame debajo del cuadro anterior, identificando la jurisdicción y el grupo de edad en filas y el sexo en columnas
+
+```{r message=FALSE, warning=FALSE}
+
+resultado = data.frame() # creamos en data.frame vacío donde se guardarán los resultados
+
+for (i in sheets) { # recorre las hojas del archivo original
+  for (j in celdas) { # recorre cada una de las celdas donde comienza un bloque de datos
+    ano=anos[which(celdas==j)] # identifica el año del bloque que está capturando
+    rango = c(j,
+              paste0(LETTERS[which(LETTERS==substring(j,1,1))+2],as.numeric(substring(j,2,4))+20)) 
+    rango = paste(rango,collapse = ":") # obtiene el rango completo del bloque
+    cuadro = readxl::read_xls("poblacion.xls", sheet = i, range = rango, col_names = F) # lee el bloque
+    colnames(cuadro) = sexo # pone nombre de columnas a los datos obtenidos
+    cuadro$ano = ano # agrega el año de los datos
+    cuadro$juri = i # agrega la jurisdicción a los datos
+    cuadro$edad = grupos_de_edad # agrega las etiquetas de los grupos de edad
+    resultado = rbind(
+      resultado,
+      cuadro[,c(4,5,6,1,2,3)]
+    ) # une los datos obtenidos al data frame donde se almacenarán todos (resultado)
+  }
+}
+
+```
+
+Ahora sí, contamos con un data frame que contiene los datos en un formato amigable:
+
+```{r warning=FALSE}
+print(resultado)
+```
+
+Podemos mejorar la presentación de los datos.
+
+```{r}
+# separamos los códigos de jurisdicción de los nombres
+resultado$juri_nombre = substring(resultado$juri,4,max(nchar(resultado$juri)))
+resultado$juri = substring(resultado$juri,1,2)
+```
+
+También podemos usar tidyr [@tidyr] para pasar la variable sexo a las filas y DT [@DT].
+
+```{r warning=FALSE}
+
+if ("tidyr" %in% installed.packages()[,"Package"]) {library(tidyr)} else {install.packages("tidyr");library(tidyr)}
+if ("DT" %in% installed.packages()[,"Package"]) {library(DT)} else {install.packages("DT");library(DT)}
+
+resultado = resultado %>% pivot_longer(cols = 4:6,
+                                       names_to = "sexo_nombre",
+                                       values_to = "poblacion") # pasa sexo a filas
+
+# codifica sexo
+resultado$sexo_codigo = ""
+resultado$sexo_codigo[resultado$sexo_nombre=="Ambos sexos"] = "0"
+resultado$sexo_codigo[resultado$sexo_nombre=="Varones"] = "1"
+resultado$sexo_codigo[resultado$sexo_nombre=="Mujeres"] = "2"
+
+resultado = resultado[,c(1,2,4,7,5,3,6)] # ordena columnas
+DT::datatable(resultado)
+
+```
+
+Podemos observar que generamos un data frame de 48.825 filas. Si tenemos en cuenta que tabulamos información de 31 años, en 25 jurisdicciones (incluyendo "total país"), para 3 categorías de sexo (incluyendo "ambos sexos") y 21 grupos de edad, podemos comprobar si nuestro trabajo fue correcto:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+filas_data_frame = 48825
+n_anos = 31
+n_jurisdicciones = 25
+n_categorias_sexo = 3
+n_grupos_de_edad = 21
+
+filas_esperadas = n_anos * n_jurisdicciones * n_categorias_sexo * n_grupos_de_edad
+
+print(filas_data_frame == filas_esperadas)
+
+```
+
+
+### 6 - Visualización
+
+Finalmente, podemos hacer una visualización sencilla de los datos usando los paquetes shiny [@Shiny], highcharter [@highcharter] y htmlwidgets [@htmlwidgets].
+
+
+```{r echo=TRUE, eval=FALSE}
+
+library(shiny)
+library(dplyr)
+library(highcharter)
+library(shinyWidgets)
+
+ui <- fluidPage(
+  column(3,
+         br(),
+         selectizeInput(inputId = "ano", 
+                        label = "Seleccionar año:", 
+                        choices = unique(resultado$ano),
+                        selected = substring(Sys.Date(),1,4)),
+         selectizeInput(inputId = "juri", 
+                        label = "Seleccionar jurisdicción:", 
+                        choices = unique(resultado$juri_nombre))
+  ),
+  column(6,
+         br(),
+         highchartOutput("grafico")),
+  column(3)
+) 
+
+# definimos la lógica para elaborar el gráfico de pirámides a partir de la información ingresada en la ui
+server <- function(input, output, session) {
+  output$grafico = renderHighchart({
+    datos_grafico = resultado[
+      resultado$ano==input$ano &
+        resultado$sexo_codigo!="0" &
+        resultado$juri_nombre==input$juri,]
+    
+    highchart() %>%
+      hc_chart(type = "bar") %>%
+      hc_title(text = paste("Pirámide de población", "-", input$juri, "-", input$ano)) %>%
+      hc_xAxis(categories = rev(unique(datos_grafico$edad))) %>%
+      hc_yAxis(title = list(text = "Población"),
+               labels = list(formatter = JS( 
+                 "function() {    
+                    return Math.abs(this.value); 
+                  }"
+               )),
+               max = max(datos_grafico$poblacion)*1.1,
+               min = max(datos_grafico$poblacion)*1.1*-1) %>%
+      hc_plotOptions(series = list(stacking = "normal",
+                                   groupPadding = 0,
+                                   pointPadding = 0,
+                                   borderWidth = .1)) %>%
+      hc_add_series(name = "Varones", data = rev(datos_grafico$poblacion[datos_grafico$sexo_codigo=="1"])*-1, color = "#d8b365") %>%
+      hc_add_series(name = "Mujeres", data = rev(datos_grafico$poblacion[datos_grafico$sexo_codigo=="2"]), color = "#5ab4ac") %>%
+      hc_legend(align = "right", verticalAlign = "top", reversed = TRUE) %>%
+      hc_tooltip(formatter = JS("function () {
+                                  if (this.series.name === 'Varones') {
+                                    return `<b>${this.series.name}</b></br>${this.y*-1}`
+                                  } else if (this.series.name === 'Mujeres') {
+                                    return `<b>${this.series.name}</b></br>${this.y}`}}")) %>%
+      hc_exporting(enabled = TRUE)
+  })  
+}
+
+# mostramos la aplicación en el servidor local
+shinyApp(ui, server)
+
+```
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+knitr::include_graphics("images/shinyApp.gif")
+```
+
+## Conclusiones
+
+Los formatos en los cuales se puede acceder a la información sobre proyecciones de población de Argentina resultan poco amigables para los procesamientos con herramientas informáticas. Este documento muestra una metodología sencilla para dar a esos datos un formato acorde a la ciencia de datos que aumenta las posibilidades de uso de esta información en casos que requieren procesamientos complejos (series temporales, cálculo de indicadores en lote, desarrollo de visualizaciones, etc.). El software estadístico R [@R-base] se presenta como una alternativa eficiente para esta tarea.
+
+
+## Referencias
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+unlink("poblacion.xls")
+write.csv(resultado,"problacion_prov.csv")
+```
+
+
+
+
+

@@ -1,0 +1,272 @@
+---
+title: "Procesamiento de datos de mortalidad y cálculo de tasas en lote"
+author: 
+ - Adrián Santoro^[adrian.santoro@gmail.com]
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: united
+    toc: yes
+    toc_float:
+      collapsed: true
+bibliography: references.bib
+link-citations: true
+
+---
+
+```{r klippy, echo=FALSE, include=TRUE}
+library(klippy)
+klippy::klippy(position=c("top","right"),
+               tooltip_message = "Copiar código",
+               tooltip_success = "Copiado!",
+               color = "#636363")
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+Las tasas crudas y ajustadas de mortalidad son dos de los indicadores más utilizados en epidemiología. Sirven para hacer comparaciones entre diferentes poblaciones y períodos de tiempo.
+
+El procedimiento para el cálculo de tasas de mortalidad es sencillo, sin embargo, al tener denominador y numerador fuentes de información distintas, requiere habitualmente el cumplimiento de ciertos pasos: obtención de la información, adaptación de los formatos, homologación de categorías, etc. Estas tareas suelen ser tediosas y aumentan la probabilidad de cometer errores. Por otro lado, cuando los cálculos deben hacerse para múltiples áreas geográficas o períodos de tiempo, suelen ser poco eficientes. 
+
+&nbsp;
+
+## Objetivo
+
+El objetivo de este documento es presentar una forma programática en R [@R-base] para el cálculo de tasas de mortalidad por año, jurisdicción y sexo para Argentina en el período 2010-2021.
+
+&nbsp;
+
+## Desarrollo
+Para el desarrollo de esta actividad se utilizarán las librerías dplyr [@dplyr],epitools [@epitools],readr [@readr] y DT [@DT].
+
+### 1- Descarga de los datos
+
+En el portal de [Datos Abiertos](http://datos.salud.gob.ar/) se encuentra disponible un dataset de defunciones ocurridas y registradas en Argentina para el período 2005-2021. En este archivo las muertes están clasificadas por una serie de variables y en la columna "cantidad" presenta una cuenta de defunciones para la combinación de categorías de cada fila.
+
+Descargamos el archivo y creamos el data frame "defunciones".
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+options(timeout=1000000) # incrementamos el timeout debido a que la descarga es lenta
+
+url = "http://datos.salud.gob.ar/dataset/27c588e8-43d0-411a-a40c-7ecc563c2c9f/resource/fab9e990-865c-43c4-a643-3dbc3b70a934/download/defunciones-ocurridas-y-registradas-en-la-republica-argentina-anos-2005-2021.csv"
+
+download.file(url, destfile = "defunciones.csv")
+
+defunciones = read.csv("defunciones.csv", encoding = "latin1")
+unlink("defunciones.csv")
+```
+
+### 2- Procesamiento de la información de mortalidad
+
+El archivo de defunciones tiene 778.353 registros. Debido a que vamos a utilizar sólo el período 2010-2021, eliminamos los años anteriores.
+
+```{r message=FALSE, warning=FALSE}
+defunciones = defunciones[defunciones$anio >= 2010,] 
+
+# observamos la estructura del data frame
+str(defunciones)
+
+# eliminamos las variables cie10_causa_id, muerte_materna_id y muerte_materna_clasificacion que no vamos a usar
+defunciones$cie10_causa_id = NULL
+defunciones$cie10_clasificacion = NULL
+defunciones$muerte_materna_id = NULL
+defunciones$muerte_materna_clasificacion = NULL
+
+```
+
+Podemos observar que en este archivo las edades están agrupadas de en grupos amplios que no coinciden con los que utiliza generalmente el INDEC (quinquenales).
+
+Si observamos el documento ["Procesamiento de proyecciones de población de Argentina 2010-2040 (INDEC)"](https://agsantoro.github.io/untref2023/RMD/RMD01_Poblacion/01_ProyeccionesDePoblacion.html)), podemos ver que los grupos utilizados en las proyecciones de población son quinquenales, finalizando en el grupo "100 y más".
+
+Observamos los grupos etarios del archivo de defunciones:
+
+```{r message=FALSE, warning=FALSE}
+unique(defunciones$grupo_edad)
+```
+Constatamos que son diferentes, por lo que tendremos que reagrupar las edades del archivo de población.
+
+### 3- Procesamiento de los datos de población
+
+En primer lugar vamos a descargar las proyecciones con el procesamiento realizado en el ejercicio anterior. El archivo resultante está alojado en el repositorio de GitHub, por lo que podemos descargarlo.
+
+```{r message=FALSE, warning=FALSE}
+library(readr)
+url = "https://raw.githubusercontent.com/agsantoro/untref2023/main/RMD/RMD01_Poblacion/problacion_prov.csv"
+download.file(url,dest="poblacion.csv")
+poblacion = read_csv("poblacion.csv") %>% as.data.frame()
+```
+
+Observamos los grupos de edad de ambos archivos y reagrupamos las edades en el de población.
+
+```{r message=FALSE, warning=FALSE}
+unique(poblacion$edad)
+unique(defunciones$grupo_edad)
+
+grupos = unique(poblacion$edad)
+
+poblacion$edad[poblacion$edad %in% grupos[1:3]] = "01.De a 0  a 14 anios"
+poblacion$edad[poblacion$edad %in% grupos[4:7]] = "02.De 15 a 34 anios"
+poblacion$edad[poblacion$edad %in% grupos[8:11]] = "03.De 35 a 54 anios"
+poblacion$edad[poblacion$edad %in% grupos[12:15]] = "04.De 55 a 74 anios"
+poblacion$edad[poblacion$edad %in% grupos[16:21]] = "05.De 75 anios y mas"
+
+```
+Comprobamos que tengamos la misma clasificación en ambos archivos:
+
+```{r message=FALSE, warning=FALSE}
+unique(poblacion$edad)
+unique(defunciones$grupo_edad)
+```
+La única diferencia observada es que en el archivo de defunciones tenemos muertes de edad sin especificar, mientras que en las proyecciones de población naturalmente esta categoría no existe.
+
+
+Sumarizamos el dataset de poblaciones que reducir las filas
+
+```{r message=FALSE, warning=FALSE}
+
+poblacion = poblacion %>% group_by(ano,juri,juri_nombre,sexo_codigo,sexo_nombre,edad) %>% summarise(poblacion=sum(poblacion))
+colnames(poblacion)
+```
+
+### 4- Cálculo de tasas de mortalidad
+
+En primer lugar vamos a seleccionar y renombrar columnas del data frame de defunciones para que los nombres de las columnas coincidan en ambas fuentes.
+
+```{r message=FALSE, warning=FALSE}
+
+colnames(poblacion)
+
+defunciones = defunciones %>% dplyr::select(ano = anio, 
+                                            juri = jurisdiccion_de_residencia_id,
+                                            sexo_codigo = sexo_id,
+                                            edad = grupo_edad,
+                                            cantidad)
+
+head(defunciones)
+```
+
+También debemos incluir los datos del total del país y ambos sexos en el archivo de defunciones, que no tiene información agregada.
+
+```{r message=FALSE, warning=FALSE}
+
+defunciones = rbind(
+    defunciones,
+    defunciones %>% mutate(juri=1))
+
+defunciones = rbind(
+    defunciones,
+    defunciones %>% mutate(sexo_codigo=0))
+
+```
+Para que el archivo quede preparado, sólo nos queda utilizar el comando expand.grid para que contenga todas las combinaciones posibles.
+
+```{r message=FALSE, warning=FALSE}
+grid = list(
+  ano=unique(defunciones$ano),
+  juri=unique(defunciones$juri),
+  edad=unique(defunciones$edad),
+  sexo_codigo=unique(defunciones$sexo_codigo)
+)
+
+grid = expand.grid(grid)
+
+defunciones = left_join(grid,defunciones)
+defunciones[is.na(defunciones)] = 0
+
+# agrupamos para volver a sumarizar la tabla luego de todos los cambios
+defunciones = defunciones %>% group_by(ano,juri,sexo_codigo,edad) %>% 
+                              summarise(cantidad=sum(cantidad))
+
+
+```
+
+Ahora vamos a realizar un loop para ir recorriendo cada año, jurisdicción y sexo y calculando las tasas brutas y ajustadas con epitools.
+
+```{r message=FALSE, warning=FALSE}
+library(epitools)
+
+# convertimos las variables de código en numéricas para que puedan vincularse sin problema
+poblacion$juri = as.numeric(poblacion$juri)
+poblacion$sexo_codigo = as.numeric(poblacion$sexo_codigo)
+
+# definimos la población total de Argentina en 2020 como población standard
+poblacion_standard = poblacion$poblacion[poblacion$ano=="2020" &
+                                           poblacion$sexo_nombre=="Ambos sexos" &
+                                           poblacion$juri=="1"]
+
+# creamos un data frame vacío donde se van a ir agregando los indicadores calculados
+tasas_resultado = data.frame()
+
+for (a in unique(defunciones$ano)) { # recorremos los años
+  for (j in unique(defunciones$juri[defunciones$juri %in% 1:94])) { # dentro de cada jurisdicción, recorremos las jurisdicciones
+    for (s in 0:2) { #dentro de cada jurisdicción, recorremos las categorías de sexo
+      def_data = defunciones[defunciones$ano == a &
+                             defunciones$juri == j &
+                             defunciones$sexo_codigo == s,] %>% left_join(poblacion) # creamos un data frame con la información del año / jurisdicción / sexo activos
+      
+      defunciones_n = sum(def_data$cantidad) # calculamos el total de defunciones
+      tasa_cruda = sum(def_data$cantidad)/sum(def_data$poblacion[is.na(def_data$poblacion)==F]) * 100000 # calculamos la tasa cruda
+      
+      def_data = def_data[def_data$edad!="06.Sin especificar",] # eliminamos la fila de edad sin especificar para cumplir con el modelo de datos que utliza la librería epitools
+      
+      # ahora creamos el dataset para anexar en esta vuelta del lopp
+      ano = first(def_data$ano) # año
+      juri_codigo = first(def_data$juri) # código de la jurisdicción
+      juri_nombre = first(def_data$juri_nombre) # nombre de la jurisdicción
+      sexo_codigo = first(def_data$sexo_codigo) # código de sexo
+      sexo_nombre = first(def_data$sexo_nombre) # nombre de sexo
+      
+      # usamos la función ageadjust.direct para ajustar las tasas
+      tasas = epitools::ageadjust.direct(
+        count = def_data$cantidad, # en count se indica la cantidad de defunciones
+        pop = def_data$poblacion, # en pop la población
+        stdpop = poblacion_standard, # en stdpop la población utilizada como standard
+        conf.level = .95 # en conf.level el nivel de confianza seleccionado para la estimación de los intervalos de confianza
+      ) *100000
+      
+      # ordenamos todos los resultados en un data frame y lo añadimos a resultados
+      
+      append = data.frame(
+        ano,
+        juri_codigo,
+        juri_nombre,
+        sexo_codigo,
+        sexo_nombre,
+        defunciones_n,
+        tasa_cruda,
+        tasas[1],
+        tasas[2],
+        tasas[3],
+        tasas[4]
+      )
+      
+      colnames(append)[8:11] = names(tasas)
+      rownames(append) = 1
+      tasas_resultado = rbind(
+        tasas_resultado,
+        append 
+      ) %>% arrange(juri_codigo,sexo_codigo)
+    }
+  }  
+}
+
+
+```
+
+Visualizamos los resultados
+
+```{r}
+library(DT)
+DT::datatable(tasas_resultado, rownames = F)
+```
+
+&nbsp;
+
+&nbsp;
+
+## Referencias

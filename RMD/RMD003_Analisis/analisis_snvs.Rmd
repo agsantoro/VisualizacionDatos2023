@@ -1,0 +1,691 @@
+---
+title: "Análisis de datos de Eventos de Notificación Obligatoria - SNVS Datos abiertos"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cosmo
+    toc: yes
+    toc_float:
+      collapsed: false
+---
+
+En este documento se presentan tres análisis con gráficos interactivos para realizar con datos de Eventos de Notificación obligatoria provenientes de Datos Abiertos. 
+
+Para las visualizaciones interactivas se utilizaron los paquetes *highcharter* y *Leaflet*.
+Se presentará una forma de procesar conjuntos de datos disponibles en datos abiertos y realizar un *match and merge* entre ellos.
+
+```{r echo=FALSE, include=FALSE}
+library(klippy)
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(color = 'darkred', tooltip_message = 'Click to copy', tooltip_success = 'Done',position = c('top', 'right'))
+```
+
+# Instalación de paquetes
+
+La función instalar chequea si los paquetes estan instalados, si no loestan los instala y luego los activa para usarlos en el programa.  
+
+```{r message=FALSE, warning=FALSE}
+
+instalar = function (libreria) {
+  if (libreria %in% installed.packages()[,"Package"]) {
+    eval(parse(text=paste0("library(",libreria,")")))} else {
+      install.packages(libreria)    
+      eval(parse(text=paste0("library(",libreria,")")))
+    library(libreria)
+  }
+}
+
+
+instalar("glue")
+instalar("foreign")
+instalar("stringr")
+instalar("readxl")
+instalar("tidyverse")
+instalar("dplyr")
+instalar("ISOweek")
+instalar("tidyr")
+instalar("highcharter")
+instalar("tsibble")
+instalar("lubridate")
+instalar("sf")
+instalar("tmap")
+instalar("leaflet")
+instalar("DT")
+instalar("classInt")
+instalar("ggspatial")
+```
+
+# Lectura de los datos 
+
+Para la lectura de los datos, en primer lugar listamos las URLs que queremos descargar. En el caso de las infecciones respiratorias, elegimos descargar los dataset detallados ya que son los que contienen información que nos sirve. Ademas elegimos los nombres que queremos para cada archivo y nombramos la carpeta donde queremos que se guarden. 
+
+```{r message=FALSE, warning=FALSE, class.source='klippy'}
+
+# Define la lista de URLs a descargar
+urls <- c(
+  #1
+  "http://datos.salud.gob.ar/dataset/c553d917-36f4-4063-ac02-1686a9120e1c/resource/f4096f8b-1692-4d5f-a6d8-09cae47931a4/download/vigilancia-respiratorias-agudas-2018-hasta-20200106.csv",
+#2
+  "http://datos.salud.gob.ar/dataset/c553d917-36f4-4063-ac02-1686a9120e1c/resource/9a62f016-ba4e-4366-a883-22e9dc785d39/download/informacion-publica-respiratorias-nacional-hasta-20180626.csv",
+#3
+  "http://datos.salud.gob.ar/dataset/c553d917-36f4-4063-ac02-1686a9120e1c/resource/0c29cc75-d81e-4f87-9257-4c30c24bfe55/download/vigilancia-de-infecciones-respiratorias-agudas-20181228.csv",
+#4
+"http://datos.salud.gob.ar/dataset/c553d917-36f4-4063-ac02-1686a9120e1c/resource/f2998314-9087-4641-aec7-f2f67c9ba865/download/informacion-publica-respiratorias-nacional-hasta-20220905.xlsx",
+#5
+"http://datos.salud.gob.ar/dataset/c553d917-36f4-4063-ac02-1686a9120e1c/resource/37feeed4-dfcd-4f39-a403-93a6b4bd90d2/download/informacion-publica-respiratorias-nacional-hasta-20230706.xlsx"
+  # Agrega más URLs según sea necesario
+)
+
+# Define los nombres de los archivos (pueden ser diferentes a los nombres originales)
+nombres_archivos <- c(
+  "vigilancia-respiratorias-agudas-2018-hasta-20200106.csv",
+  "informacion-publica-respiratorias-nacional-hasta-20180626.csv",
+  "vigilancia-de-infecciones-respiratorias-agudas-20181228.csv",
+  "informacion-publica-respiratorias-nacional-hasta-20220905.xlsx",
+  "informacion-publica-respiratorias-nacional-hasta-20230706.xlsx"
+  # Agrega más nombres de archivos según sea necesario
+)
+
+# Carpeta de destino
+carpeta_destino <- "RMD/RMD003_Analisis/datos"
+```
+
+La siguiente porción de código, utilizando un loop *for*, chequea cada una de los archivos detallados y los descarga si no están descargados. Si el archivo ya existe en la carpeta señalada, no los descarga y envía un aviso "El archivo ya existe en la carpeta...".
+
+```{r}
+# Verifica y descarga los archivos desde las URLs
+for (i in 1:length(urls)) {
+  # Ruta completa del archivo en la carpeta /datos
+  ruta_completa <- file.path(carpeta_destino, nombres_archivos[i])
+
+  # Verifica si el archivo ya existe en la carpeta
+  if (!file.exists(ruta_completa)) {
+    # Si el archivo no existe, descárgalo desde la URL
+    download.file(urls[i], destfile = ruta_completa, mode = "wb")
+    cat("Archivo descargado y guardado en:", ruta_completa, "\n")
+  } else {
+    cat("El archivo ya existe en la carpeta:", ruta_completa, "\n")
+  }
+}
+```
+
+Una vez que tenemos los archivos que necesitamos descargados, podemos leerlos en este entorno. A continuación se presenta un loop que lee los archivos y les pone nombres. En este caso todos los archivos que queremos leer presentan información estructurada de una forma similar y se diferencian, principalmente, en los periodos de tiempo que contienen. A los diferentes conjuntos los llamamos Datos1, datos2, datos3, y así sucesivamente. 
+
+```{r}
+# Leer los archivos y asignar a objetos en R
+datos <- list()  # Lista para almacenar los datos
+
+for (i in 1:length(nombres_archivos)) {
+  ruta_completa <- file.path(carpeta_destino, nombres_archivos[i])
+  extension <- tools::file_ext(nombres_archivos[i])
+  
+  if (extension == "csv") {
+    datos[[i]] <- read.csv(ruta_completa, encoding = "UTF-8")
+  } else if (extension == "xlsx") {
+    datos[[i]] <- read_excel(ruta_completa)
+  }
+}
+
+# Asignar a objetos con nombres específicos
+for (i in 1:length(nombres_archivos)) {
+  assign(paste0("datos", i), datos[[i]])
+  cat("Datos", i, "cargados en objeto:", paste0("datos", i), "\n")
+}
+```
+
+
+Co mis datasets ya cargados en el entorno de trabajo, puedo revisar como es la estructura de cada uno de ellos para evaluar si necesito hacer ajustes antes de hacer la unión entre ellos.  Si corro el siguiente código voy a observar los nombres de las columnas de cada uno de los datasets. De este modo puedo detectar que la columna 5 (año) se encuentra nombrada de diferente forma. El resto de los nombres y cantidad de columnas coinciden entre datasets. Esta es una forma rápida y superficial de revisar el contenido de muchos dataset a la vez. 
+
+
+```{r}
+# Lista de nombres de los dataframes
+nombres_dataframes <- c("datos1", "datos2", "datos3", "datos4", "datos5")
+
+# Loop para mostrar los nombres de las columnas de cada dataframe
+for (nombre_df in nombres_dataframes) {
+  if (exists(nombre_df)) {
+    cat("Nombres de columnas en", nombre_df, ":\n")
+    print(colnames(get(nombre_df)))
+    cat("\n")
+  } else {
+    cat("El dataframe", nombre_df, "no existe.\n")
+  }
+}
+
+##identifico que algunos dataframes tienen error en el nombre de la col 5 (año)
+```
+
+Debido a este problema identificado, procedo a renombrar a la columna 5 en todos los datasets con los que estoy trabajando. Esto lo realizo con un loop *for*: Si el dataset tiene otro número de columnas diferente a 10, se avisará en la consola sobre esta diferencia. Si el dataset tiene 10 columna, se remplazará el nombre de la 5 por "ano". Si el dataset no existe se avisará que ese dataset no existe en el entorno de trabajo. 
+
+```{r}
+#la renombro
+# Loop para reemplazar el nombre de la columna 5  por "ano" en cada dataframe
+for (nombre_df in nombres_dataframes) {
+  if (exists(nombre_df)) {
+    df <- get(nombre_df)  # Obtener el dataframe
+    if (ncol(df) == 10) {
+      colnames(df)[5] <- "ano"  # Reemplazar el nombre de la columna 5 por "ano"
+      assign(nombre_df, df)  # Actualizar el dataframe en el entorno
+      cat("Nombre de la columna 5 reemplazado por 'ano' en", nombre_df, "\n")
+    } else {
+      cat("El dataframe", nombre_df, "tiene un numero diferente de columnas, probablemente tenga otra estructura\n")
+    }
+  } else {
+    cat("El dataframe", nombre_df, "no existe.\n")
+  }
+}
+
+```
+
+# Union de datasets
+
+El siguiente paso de este programa es generar una unión y un macheo entre estos 5 datasets diferentes que contienen diferente información. Entonces, corresponde definir de que forma realizaremos este proceso ya que existen diferentes formas de hacerlo. La decisión que tomemos es metodológica y debe ser explicitada ya que incidirá en los resultados del análisis. 
+
+"Match and merge" en el contexto de Ciencia de Datos se refiere a dos procesos fundamentales que son esenciales para integrar y consolidar datos de múltiples fuentes, especialmente cuando trabajamos con conjuntos de datos heterogéneos o cuando queremos unificar información proveniente de diferentes sistemas. Estos procesos son cruciales para garantizar la calidad, integridad y coherencia de los datos en análisis posteriores.
+
+<span style="color:blue;">**1. Matching (Coincidencia):**</span> La etapa de coincidencia implica identificar y agrupar registros o entradas que representan la misma entidad o el mismo objeto en diferentes fuentes de datos. Esta etapa es fundamental para garantizar que estamos comparando y analizando información coherente. En el ejemplo co el que estamos trabajando el match se realiza a partir de corregir errores en los acentos de la variable *provincia_nombre* y coincidencia exacta entre las variables: departamento_id,provincia_nombre, provincia_id, ano, semanas_epidemiologicas,grupo_edad_id. Cuando dos o mas registros de la misma o de diferentes datasets cumplen con este criterio se realiza el match. Un criterio diferente al que elegimos de matching puede buscar coincidencia en menos variables o buscar coincidencia aproximadas, por rangos o por cercanía. La elección del tipo de matching se debe realizar en relación al problema que se busca resolver.
+
+<span style="color:blue;">**2. Merging (Combinación):**</span> Una vez que los registros se han identificado y agrupado adecuadamente a través de la coincidencia, el proceso de combinación implica unificar la información relevante de estos registros en una sola entrada. Esto implica tomar decisiones sobre cómo combinar los datos, qué valores priorizar, cómo manejar valores faltantes y cómo mantener la integridad de los datos. En el ejemplo con el que estamos trabajando, cuando se cumple con el criterio de match, el merge o la combinación se realiza tomando el valor mayor de la variable cantidad_casos entre los registros que tuvieron coincidencia. Utilizamos este criterio considerando que el registro con mayor valor en la variable cantidad de casos es el registro mas actualizado.  
+
+
+```{r}
+# Lista de dataframes (datos1, datos2, datos3, datos4, datos5)
+lista<- list(datos1, datos2, datos3, datos4, datos5)
+
+# Función para corregir el nombre de provincia
+#algunas prvincias lo tienen mal escrito
+#table(combined_df$provincia_nombre)
+
+corregir_nombre <- function(df) {
+  df %>% 
+    mutate(provincia_nombre = stringr::str_replace(provincia_nombre, "Cordoba", "Córdoba")) %>%
+    mutate(provincia_nombre = stringr::str_replace(provincia_nombre, "C¢rdoba","Córdoba")) %>%
+    mutate(provincia_nombre = stringr::str_replace(provincia_nombre, "Tucuman", "Tucumán")) %>%
+    mutate(provincia_nombre = stringr::str_replace(provincia_nombre, "Entre Rios", "Entre Ríos")) %>%
+    mutate(provincia_nombre = stringr::str_replace(provincia_nombre, "Rio Negro", "Río Negro")) %>%
+    mutate(provincia_nombre = stringr::str_replace(provincia_nombre, "Neuquen", "Neuquén"))
+}
+
+# Aplicar la función a cada dataframe en la lista
+dataframes_list_corregidos <- map(lista, corregir_nombre)
+
+# Unir los dataframes corregidos utilizando bind_rows
+combined_df <- bind_rows(dataframes_list_corregidos)
+
+table(combined_df$provincia_nombre)# verificar que esten bien los nombres
+
+# Unir los dataframes después de corregir los nombres
+combined_df <- bind_rows(dataframes_list_corregidos)
+```
+
+
+Una vez corregidos los errores detectados en nombres de provincias, aplico los criterios de **match & merge**. 
+
+```{r}
+##aplico match basado en conicidencia exacta en variables
+#"departamento_id", "provincia_nombre", "provincia_id", "ano", "semanas_epidemiologicas", "grupo_edad_id"
+# y el merge con valor maximo.
+
+summarized_df <- combined_df %>%
+  filter(evento_nombre=="Enfermedad tipo influenza (ETI)")%>%##aca seleciono el evento
+  group_by(departamento_id,provincia_nombre, provincia_id, ano, semanas_epidemiologicas,grupo_edad_id) %>%# match
+  summarize(max_casos = max(cantidad_casos)) # criterio de merge (selecciono el mayr valor)
+
+# Verificar duplicados en las columnas especificadas
+duplicados <- summarized_df[duplicated(summarized_df[, c("departamento_id", "provincia_nombre", "provincia_id", "ano", "semanas_epidemiologicas", "grupo_edad_id")]), ]
+nrow(duplicados)
+##no detecté duplicados
+```
+
+Ahora procedo a agrupar a nivel de provincia_nombre,ano, semanas_epidemiologicas ya que son las variables con las que voy a contruir mi serie de tiempo.
+
+```{r}
+## agrupo a nivel de provincias y semanas ya que es con lo que voy a cotruir mis sries de tiempo. 
+datos_eti <- summarized_df %>%
+  ungroup() %>% 
+  group_by(provincia_nombre,ano, semanas_epidemiologicas) %>%
+  summarize(casos = sum(max_casos))
+```
+
+
+# Serie temporal de notificaciones de ETI (Enfermedad Tipo Influenza)
+
+```{r message=FALSE, warning=FALSE}
+
+
+DT::datatable(head(datos_eti))
+
+```
+
+Transformamos las variables Año y semanas_epidemiológicas en una variable con formato fecha de la semana. Para ello creo una función (convert_epiweek) porque las semanas epi en el año 2020 tuvieron características que no me permiten hacen una transformación a fecha directa.
+
+
+```{r message=FALSE, warning=FALSE}
+
+###esta fn sirve para generar una variable fecha a aprtir de un vector de año y otro de semana EPI.
+convert_epiweek <- function(year, week) {
+  epiweek_date <- ifelse(year == 2020 & week == 53,
+                         "2020-W53",
+                         ifelse(year == 2020, ISOweek(ymd(
+                           as.Date(paste(year, week, 1, sep = "-"), "%Y-%U-%u")
+                         ) - weeks(1)),
+                         ISOweek(as.Date(
+                           paste(year, week, 1, sep = "-"), "%Y-%U-%u"
+                         ))))
+  return(epiweek_date)
+}
+```
+
+
+```{r message=FALSE, warning=FALSE}
+datos_eti <- datos_eti %>% ungroup() %>%
+  mutate(semana = 
+           yearweek(convert_epiweek(ano, semanas_epidemiologicas)))
+datos_eti$semana2 <- as.Date(datos_eti$semana)
+datos_eti$semana3 <- as.POSIXct(datos_eti$semana)
+DT::datatable(head(datos_eti))
+```
+
+Ahora utilizo el paquete *Highcharter* para hacer una visualización de la serie completa donde pueda agregar y quitar las provincias y ademas filtrar por el eje x, del tiempo para hacer zoom. 
+
+Para ello, primero creo la tabla *ts_base*.
+
+```{r message=FALSE, warning=FALSE}
+
+ts_base = datos_eti %>%
+  group_by(provincia_nombre, semana) %>% 
+  summarise(casos = sum(casos))
+
+ts_base$semana = as.character(ts_base$semana)
+DT::datatable(ts_base)
+
+```
+
+Como se puede observar en la tabla de arriba, hay faltantes en la serie de tiempo. Para algunas provincias hay semanas que estan ausentes porque no hay datos. 
+Para poder contruir gráficos con la libreria *Highcharter* es necesario tener la serie completa. Una forma fácil de rellenar es utilizando la fn *expand_grid()*.
+
+Esta función crea un nuevo dataframe con todas las combinaciones de dos o mas vectores proporcionados. Una vez generado el grid se realiza un join por derecha para traer los datos de casos notificados.
+
+
+```{r message=FALSE, warning=FALSE}
+grid = list(
+  provincia_nombre = unique(ts_base$provincia_nombre),
+  semana = unique(as.character(ts_base$semana))
+)
+
+grid = expand.grid(grid)
+data_grafico = left_join(grid, ts_base %>% as.data.frame)
+data_grafico$casos[is.na(data_grafico$casos)] = 0
+
+DT::datatable(grid)
+
+```
+
+Usando la tabla *data_grafico* se puede elaborarar el gráfico.
+
+```{r}
+
+grafico =
+  highchart() %>%
+  hc_chart(type = "line",
+           zoomType = 'xy') %>% #aca defino el tipo de grafico y si quiero la funcion para hacer zoom a algun eje
+  hc_title(text = "Notificaciones de ETI por SEPI") %>% #titulo
+  hc_xAxis(categories = unique(ts_base$semana))%>% ## ejes
+  hc_yAxis(title = list(text = "Notificaciones")) #titulos de ejes
+
+provincias_seleccionadas = c("Buenos Aires", "Córdoba", "CABA", "Santa Fe", "Mendoza")
+
+#aca se hace un loop donde se itera por las provincias seleccionadas usando la fn de hc_add_series del paquete highcharter.
+
+for (i in provincias_seleccionadas) {
+  casos = data_grafico$casos[data_grafico$provincia_nombre == i]
+  grafico = grafico %>% hc_add_series(name = i, data = casos)
+}
+
+grafico
+```   
+
+
+Puedo cambiar el tema. Es esta [página](https://jkunst.com/highcharter/articles/themes.html) tengo modelos.
+```{r message=FALSE, warning=FALSE}
+##https://jkunst.com/highcharter/articles/themes.html#themes-19
+grafico %>% 
+  hc_add_theme(hc_theme_google())
+```
+
+
+# Graficos combinados
+
+Se presenta a continuación un gráfico interactivo combinado utilizando *highcharter*. Se muestras graficos de barra para las semanas epis y un gráfico de torta para mostrar como se distribuye la edad en ese conjunto de datos.
+
+EN primer lugar, preparo tablas para cada uno de estos graficos con los datos por semana y por grupo de edad.
+
+```{r message=FALSE, warning=FALSE}
+#armo tabla de porcentajes para grafico de torta
+torta <- summarized_df %>%
+  filter(ano == 2022) %>%
+  group_by(grupo_edad_id) %>%
+  summarise(casos = sum(max_casos)) %>%
+  mutate(porcent = round(casos / sum(casos) * 100, 1))
+
+#ordeno las categorias de grupos de edad para que esten de menor a mayor
+torta <- torta %>%
+  mutate(
+    grupo_edad = case_when(
+      grupo_edad_id == 1 ~ "1. Menor de 4 años",
+      grupo_edad_id == 2 ~ "1. Menor de 4 años",
+      grupo_edad_id == 6 ~ "3. 10 a 14",
+      grupo_edad_id == 3 ~ "1. Menor de 4 años",
+      grupo_edad_id == 7 ~ "4. 15 a 19",
+      grupo_edad_id == 4 ~ "1. Menor de 4 años",
+      grupo_edad_id == 8 ~ "5. 20 a 64",
+      grupo_edad_id == 9~ "5. 20 a 64",
+      grupo_edad_id == 10 ~ "5. 20 a 64",
+      grupo_edad_id == 11 ~ "5. 20 a 64",
+      grupo_edad_id == 5~ "2. 5 a 9",
+      grupo_edad_id == 12 ~ "6. más de 65",
+      grupo_edad_id == 13 ~ "6. más de 65",
+      grupo_edad_id == 17~ "7. Edad Sin Esp.",
+      TRUE ~ as.character(grupo_edad_id)
+    )
+  ) %>% group_by(grupo_edad) %>% 
+  summarise(porcent=sum(porcent)) %>% 
+  arrange(as.numeric(substring(grupo_edad, 1, 2)))
+
+# armo tabla de n para el gráfico de barras
+barras <- summarized_df %>%
+  filter(ano == 2022) %>%
+  group_by(semanas_epidemiologicas) %>%
+  summarise(casos = sum(max_casos)) %>%
+  mutate(porcent = round(casos / sum(casos) * 100, 1))
+
+# asi quedaron ambas tablas
+DT::datatable(torta)
+```
+
+Código para el gráfico:
+
+```{r}
+chart1 <- highchart() %>%
+  hc_add_series(# agrego serie para barras
+    barras,
+    "column", hcaes(
+      x = semanas_epidemiologicas, y = casos
+    ),
+    name = "Casos de ETI"
+  ) %>%
+  hc_add_series(#Agrego serie para torta
+    torta, "pie", hcaes(
+      name = grupo_edad, y = porcent
+    ),
+    name = "Casos de ETI por grupo de edad (%)"
+  ) %>%
+  ## en ociones puedo definir como quiero ver los labels,y la ubicacion y tamaño
+  hc_plotOptions(
+    series = list(
+      showInLegend = FALSE,
+      pointFormat = "{point.y}%",
+      colorByPoint = FALSE
+    ), 
+    pie = list(## caracteristicas del pies
+      center = c("65%", "10%"),
+      size = 120,
+      dataLabels = list(enabled = FALSE),
+      colorByPoint = TRUE
+    ),
+    column = list(groupPadding = 0,#características de las barras
+                  pointPadding = 0,
+                  borderWidth = 0.3,
+                  borderColor = "white",# color de los bordes
+                  color= "#377eb8" #color de la barrra
+                  )
+  )%>%
+  ## Axis
+  hc_yAxis(
+    title = list(text = "Número de casos"),
+    labels = list(format = "{value}"),
+    max = 30000
+  ) %>%
+  hc_xAxis(title = list(text = "Semana EPI"),
+      categories = barras$semanas_epidemiologicas
+  ) %>%
+  ## Titles, subtitle, caption and credits
+  hc_title(
+    text = "Grafico de barras combinado con piechart: Notificaciones de ETI, 2022"
+  ) %>%
+  hc_subtitle(
+    text = "Ejemplo de grafico combinado para notificaciones de eti por semana y gráfico de torta por grupo de edad"
+  ) %>%
+  hc_caption(
+    text = "Se representatan casos notificados de ETI al SNVS 2.0"
+  ) %>%
+  hc_credits(
+    enabled = TRUE, text = "Fuente: Datos abiertos/ SNVS", href = "http://datos.salud.gob.ar/", style = list(fontSize = "12px")
+  ) %>% 
+    hc_exporting(enabled = TRUE) # enable exporting option
+chart1
+
+```
+
+Un alternativa:
+
+```{r}
+
+#armo tabla de porcentajes para grafico de torta
+barras_apiladas <- summarized_df %>%
+  filter(ano == 2022) %>%
+  group_by(grupo_edad_id, semanas_epidemiologicas) %>%
+  summarise(casos = sum(max_casos)) %>%
+  group_by(semanas_epidemiologicas) %>% 
+  mutate(porcent = round(casos / sum(casos) * 100, 1))
+
+#ordeno las categorias de grupos de edad para que esten de menor a mayor
+barras_apiladas <- barras_apiladas %>%
+  mutate(
+    grupo_edad = case_when(
+      grupo_edad_id == 1 ~ "1. < 6 m",
+      grupo_edad_id == 2 ~ "2. 6 a 11 m",
+      grupo_edad_id == 6 ~ "6. 10 a 14",
+      grupo_edad_id == 3 ~ "3. 12 a 23 m",
+      grupo_edad_id == 7 ~ "7. 15 a 19",
+      grupo_edad_id == 4 ~ "4. 2 a 4",
+      grupo_edad_id == 8 ~ "8. 20 a 24",
+      grupo_edad_id == 9~ "9. 25 a 34",
+      grupo_edad_id == 10 ~ "10. 35 a 44",
+      grupo_edad_id == 11 ~ "11. 45 a 64",
+      grupo_edad_id == 5~ "5. 5 a 9",
+      grupo_edad_id == 12 ~ "12. 65 a 74",
+      grupo_edad_id == 13 ~ "13. >= a 75",
+      grupo_edad_id == 17~ "14. Edad Sin Esp.",
+      TRUE ~ as.character(grupo_edad_id)
+    )
+  ) %>%
+  arrange(as.numeric(substring(grupo_edad, 1, 2))) %>% 
+  mutate(grupo_edad = grupo_edad %>% fct_reorder(grupo_edad_id, .desc = FALSE))
+
+bar_chart <- highchart() %>%
+  hc_xAxis(categories = unique(barras_apiladas$semanas_epidemiologicas),title = list(text = "Semana Epidemiológica"),title = list(text = "Semana EPI")) %>%
+  hc_yAxis(
+    title = list(text = "%")
+  ) %>%  
+  hc_add_series(
+    data = barras_apiladas,
+    type = "column",
+    hcaes(x = semanas_epidemiologicas, y = porcent, group = grupo_edad,
+          name= grupo_edad),
+    stacking = "percent",  # Apilar al 100%
+    
+  ) %>%
+
+  hc_tooltip(
+    headerFormat = "",
+    pointFormat = "<span style=\"color:{point.color}\">\u25CF</span> {series.name}: <b>{point.y:.1f}%</b>"
+  )%>% 
+  hc_plotOptions(
+    
+    column = list(groupPadding = 0,#características de las barras
+                  pointPadding = 0,
+                  borderWidth = 0.3,
+                  borderColor = "white",
+                  stacking = TRUE)
+  ) %>% 
+   hc_size(height = 300, width =500) %>% 
+  hc_legend(itemStyle = list(fontSize = "7px")) %>%  # Cambiar el tamaño de la leyenda
+    hc_exporting(enabled = TRUE) # enable exporting optio
+
+
+# Mostrar el gráfico de barras apiladas al 100%
+chart2 <- highchart() %>%
+  hc_add_series(# agrego serie para barras
+    barras,
+    "column", hcaes(
+      x = semanas_epidemiologicas, y = casos
+    ),
+    name = "Casos de ETI"
+  ) %>%
+  ## en ociones puedo definir como quiero ver los labels,y la ubicacion y tamaño
+  hc_plotOptions(
+    
+    series = list(
+      showInLegend = FALSE,
+      pointFormat = "{point.y}%",
+      colorByPoint = FALSE
+    ), 
+   
+    column = list(groupPadding = 0,#características de las barras
+                  pointPadding = 0,
+                  borderWidth = 0.3,
+                  borderColor = "white",# color de los bordes
+                  color= "#377eb8" #color de la barrra
+                  )
+  )%>%
+  ## Axis
+  hc_yAxis(
+    title = list(text = "Número de casos"),
+    labels = list(format = "{value}"),
+    max = 30000
+  ) %>%
+  hc_xAxis(title = list(text = "Semana EPI"),
+      categories = barras$semanas_epidemiologicas
+  ) %>%
+  hc_size(height = 300, width = 800) %>% 
+ 
+    hc_exporting(enabled = TRUE) # enable exporting option
+
+### los uno en un grid
+hw_grid(list(chart2, bar_chart), ncol=1,rowheight=300)
+```
+
+
+# Mapas
+
+Se van a presentar mapas de tasa de notificación de Sífilis en ambos sexos, para los años 2018 y 2020. 
+
+Leo los datos de datos abiertos que los tengo previamente descargados en una carpeta:
+
+```{r}
+sifilis <-  read.csv("RMD/RMD003_Analisis/datos/tasa-sifilis-por-100-mil-habitantes-sexo-jurisdiccion-2018-2020-argentina_1.csv", encoding = "latin1")
+```
+
+```{r message=FALSE, warning=FALSE}
+tasas <- sifilis %>% 
+  filter(anio==2018|anio==2020, id_sexo==3,
+         id_jurisdiccion!=200) %>% 
+  spread(anio, jurisdiccion_tasa_sifilis)
+
+DT::datatable(head(tasas))
+```
+
+Leo mapa de argentina en formato RDS:
+
+```{r message=FALSE, warning=FALSE}
+mapa_arg <- readRDS(url("https://biogeo.ucdavis.edu/data/gadm3.6/Rsf/gadm36_ARG_1_sf.rds"))
+
+mapa_arg <- sf::st_transform(mapa_arg, 5345)## EPSG:5345  posgar 2007/ Argentina faja 3
+ggplot(data = mapa_arg) +
+    geom_sf(crs=5345)
+```
+
+
+
+Unimos tabla de tasas con mapa.
+
+```{r message=FALSE, warning=FALSE}
+tasas$jurisdiccion <- car::recode(tasas$jurisdiccion,"'CABA'='Ciudad de Buenos Aires'")
+
+tasas2 <- tasas %>% gather("ano","tasa", 5:6)
+mapa_arg <- dplyr::left_join(mapa_arg, tasas2, by = c("NAME_1"="jurisdiccion"))
+mapa_arg2 <- dplyr::left_join(mapa_arg, tasas, by = c("NAME_1"="jurisdiccion"))
+```
+
+
+```{r message=FALSE, warning=FALSE}
+tmap_mode("view")
+tm_shape(mapa_arg2) +
+    tm_polygons(c("2018", "2020"), n=4, style="jenks") +
+    tm_facets(sync = TRUE, ncol = 2)
+```
+
+
+## Alternativa segundo mapa utilizando ggplot.
+
+```{r message=FALSE, warning=FALSE}
+breaks_qt <- classIntervals(
+  c(min(mapa_arg$tasa) - .00001,mapa_arg$tasa), n = 4, style = "quantile", dataPrecision = 1)
+
+mapaProv_sf_tasa <- mutate(mapa_arg,
+                           Tasas = cut(mapa_arg$tasa, breaks_qt$brks)) 
+mapa_pais <- ggplot(mapaProv_sf_tasa %>% filter(ano>=2013)) +## si tengo una serie de tiempo  
+  geom_sf(aes(fill=Tasas)) +
+  scale_fill_brewer(palette = "BuPu", na.value="grey") +## elijo la paleta de colores
+  facet_wrap(~ ano, nrow=1)+
+  annotation_scale()+
+  scale_x_continuous(breaks = seq(-75, -50, by = 10))+
+  ggtitle("Tasas de notificación de Sífilis, periodo 2018-2020, Argentina")+
+  labs(fill="Tasa de notificación de Sífilis:")+
+  coord_sf(crs = "+proj=tmerc +lat_0=-90 +lon_0=-66 +k=1 +x_0=3500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")+
+  theme_minimal()+
+  theme(
+    strip.text = element_text(size=13),
+    legend.position = "bottom")+
+  scale_colour_manual(values=NA)
+mapa_pais
+
+```
+
+
+```{r message=FALSE, warning=FALSE}
+##solo caba################
+
+mapaProv_sf <-  sf::st_read("C:/Users/velen/OneDrive/Documentos/IECS CIIPS/untref2023/RMD/RMD003_Analisis/datos/mapas/pxpciadatosok.shp")
+
+names(mapaProv_sf)[1] <- "link"
+mapaProv_sf$link2 <- as.numeric(mapaProv_sf$link)
+mapaProv_sf_tasa2 <- inner_join(mapaProv_sf, as.data.frame(mapaProv_sf_tasa[,c(14,15,17,13)]),
+                                by=c("link2"="id_jurisdiccion"))
+
+mapa_caba <- ggplot(mapaProv_sf_tasa2) + 
+  geom_sf(aes(fill=Tasas)) +
+  scale_fill_brewer(palette = "BuPu", na.value= "white") +
+  facet_wrap(~ ano, nrow=1)+
+  annotation_scale()+
+  #coord_sf(crs = st_crs(4326))+
+  ggtitle("Puedo agregar un título")+
+  labs(fill="Tasa de notificación de Sífilis")+
+  coord_sf(xlim = c(-58.7,-58.2), ylim = c( -34.8,-34.4), expand = T) +
+  theme_minimal()+
+  theme(
+    strip.text = element_text(size=13),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank())
+
+mapa_caba
+```
+
+```{r}
+##ggpubr::ggarrange(mapa_pais, mapa_caba, ncol=2)
+```
+
