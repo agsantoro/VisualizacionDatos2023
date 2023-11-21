@@ -86,7 +86,7 @@ Opciones de despliegue de aplicaciones Shiny. Configuración de una cuenta en sh
 El curso se desarrollará de manera virtual y sincrónica. Se abordarán los contenidos de forma práctica con el propósito de reproducir las diferentes fases en el desarrollo de una visualización interactiva de datos (acceso a la información, procesamiento, análisis, visualización, despliegue).
 
 
-
+<!--
 ## **REQUISITOS PARA LA APROBACIÓN DE LA MATERIA**
 
 ### EVALUACIÓN
@@ -94,7 +94,7 @@ Para la aprobación de la asignatura es necesario cumplimentar el 80% de asisten
 ### ASISTENCIA A CLASES
 El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
-
+-->
 ## **CONTENIDO DEL REPOSITORIO**
 
 ### Tutoriales
