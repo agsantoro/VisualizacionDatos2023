@@ -15,7 +15,9 @@
      <!--
 7. [REQUISITOS PARA LA APROBACIÓN DE LA MATERIA](#requisitos-para-la-aprobación-de-la-materia)
     - [EVALUACIÓN](#evaluación)
-    - [ASISTENCIA A CLASES](#asistencia-a-clases) -->
+    - [ASISTENCIA A CLASES](#asistencia-a-clases)
+      -->
+      
 6. [CONTENIDO DEL REPOSITORIO](#contenido-del-repositorio)
     - [Tutoriales](#tutoriales)
     - [Materiales CLASE 1](#materiales-clase-1)
@@ -97,6 +99,7 @@ Para la aprobación de la asignatura es necesario cumplimentar el 80% de asisten
 El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 -->
+
 ## **CONTENIDO DEL REPOSITORIO**
 
 ### Tutoriales
