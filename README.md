@@ -10,11 +10,13 @@
     3. [Unidad 3: Introducción a Shiny y conceptos básicos de visualización de datos.](#unidad-3-introducción-a-shiny-y-conceptos-básicos-de-visualización-de-datos)
     4. [Unidad 4: Visualización interactiva en Shiny](#unidad-4-visualización-interactiva-en-shiny)
     5. [Unidad 5: Despliegue de la aplicación Shiny](#unidad-5-despliegue-de-la-aplicación-shiny)
+     
 5. [METODOLOGÍA](#metodología)
-6. [REQUISITOS PARA LA APROBACIÓN DE LA MATERIA](#requisitos-para-la-aprobación-de-la-materia)
+     <!--
+7. [REQUISITOS PARA LA APROBACIÓN DE LA MATERIA](#requisitos-para-la-aprobación-de-la-materia)
     - [EVALUACIÓN](#evaluación)
-    - [ASISTENCIA A CLASES](#asistencia-a-clases)
-7. [CONTENIDO DEL REPOSITORIO](#contenido-del-repositorio)
+    - [ASISTENCIA A CLASES](#asistencia-a-clases) -->
+6. [CONTENIDO DEL REPOSITORIO](#contenido-del-repositorio)
     - [Tutoriales](#tutoriales)
     - [Materiales CLASE 1](#materiales-clase-1)
     - [Materiales CLASE 2](#materiales-clase-2)
