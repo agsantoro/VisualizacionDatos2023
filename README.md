@@ -109,7 +109,7 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
  <!-- [PPT1](https://agsantoro.github.io/untref2023/PPT/ppt1.html)  -->
 
  <!--  [PPT2](https://agsantoro.github.io/untref2023/PPT/ppt2.html)  -->
-
+<!--
 ### Materiales CLASE 2
 [Procesamiento de datos de población (jurisdicciones)](https://agsantoro.github.io/untref2023/RMD/RMD001_Poblacion/01_ProyeccionesDePoblacion.html)
 
@@ -140,6 +140,7 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 [Grabación clase 6 (parte 1)](https://drive.google.com/file/d/1DameceF-oeyvqnDX75WfPaid3huEZKG8/view)
 
 [Grabación clase 6 (parte 2)](https://drive.google.com/file/d/1wjGSE1L8k4DvevYg4JQ1NtWQshGEVszI/view)
+-->
 
 ### Bibliografía
 
