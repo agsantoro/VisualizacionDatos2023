@@ -12,11 +12,6 @@
     5. [Unidad 5: Despliegue de la aplicación Shiny](#unidad-5-despliegue-de-la-aplicación-shiny)
      
 5. [METODOLOGÍA](#metodología)
-     <!--
-7. [REQUISITOS PARA LA APROBACIÓN DE LA MATERIA](#requisitos-para-la-aprobación-de-la-materia)
-    - [EVALUACIÓN](#evaluación)
-    - [ASISTENCIA A CLASES](#asistencia-a-clases)
-      -->
       
 6. [CONTENIDO DEL REPOSITORIO](#contenido-del-repositorio)
     - [Tutoriales](#tutoriales)
