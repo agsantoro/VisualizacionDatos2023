@@ -23,6 +23,9 @@
     - [Materiales CLASE 6](#materiales-clase-6)
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
+    - [Foro](#Foro)
+    - [Enlaces de Zoom](#Enlaces-zoom)
+   
 
 <!-- Contenido -->
 
@@ -148,6 +151,29 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 [Google Sheet de la clase](https://docs.google.com/spreadsheets/d/1tol7FcFKQYHLMx0Zh9hqCG8IkqJdD79WSsdAJTlOJ0E/edit#gid=0)
 
 [shiny:: CHEAT SHEET Descarga](https://github.com/rstudio/cheatsheets/raw/main/shiny.pdf)
+
+### Foro
+[Foro](https://github.com/agsantoro/VisualizacionDatos2023/discussions)
+
+### Enlaces de Zoom
+
+[Miércoles 22/nov] (https://paho-org.zoom.us/j/82797728601)
+[Viernes 24/nov] (https://paho-org.zoom.us/j/81894386805)
+ 
+
+<!--
+Miércoles 29/nov: https://paho-org.zoom.us/j/82797728601
+Viernes 1/dic: https://paho-org.zoom.us/j/81894386805
+ 
+
+Miércoles 6/dic: https://paho-org.zoom.us/j/82797728601
+Viernes 8/dic: https://paho-org.zoom.us/j/81894386805
+ 
+
+Miércoles 13/dic: https://paho-org.zoom.us/j/89165491235
+Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
+
+-->
 
 
 
