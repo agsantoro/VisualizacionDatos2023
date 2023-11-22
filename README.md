@@ -24,7 +24,7 @@
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#Foro)
-    - [Enlaces de Zoom](#Enlaces-zoom)
+    - [Enlaces de Zoom](#Enlaces-de-Zoom)
     - [Grabaciones](#Grabaciones)
    
 
