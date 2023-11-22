@@ -158,6 +158,7 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 ### Enlaces de Zoom
 
 [Miércoles 22/nov] (https://paho-org.zoom.us/j/82797728601)
+
 [Viernes 24/nov] (https://paho-org.zoom.us/j/81894386805)
  
 
