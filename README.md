@@ -25,6 +25,7 @@
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#Foro)
     - [Enlaces de Zoom](#Enlaces-zoom)
+    - [Grabaciones](#Grabaciones)
    
 
 <!-- Contenido -->
@@ -176,5 +177,5 @@ Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
 
 -->
 
-
+### Grabaciones
 
