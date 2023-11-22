@@ -28,15 +28,11 @@
 
 # **Programa: Introducción al procesamiento, análisis y visualización interactiva de datos abiertos en salud.**
 
-Cupo: 30
-
-CARGA HORARIA: 32 HS
-
-AÑO: 2023 CUATRIMESTRE: SEGUNDO
+AÑO: 2023
 
 DOCENTES: Adrián Santoro / Velén Pennini
 
-El curso está orientado a profesionales de diferentes disciplinas que se interesen o trabajen con estadísticas o ciencia de datos y que cuenten con conocimientos básicos o intermedios de R. No es requisito el conocimiento previo de las fuentes específicas de datos de salud.
+El curso está orientado a profesionales de diferentes disciplinas que se interesen o trabajen con estadísticas o ciencia de datos en salud y que cuenten con conocimientos básicos o intermedios de R.
 
 ## Requerimientos mínimos necesarios para este curso 
 
