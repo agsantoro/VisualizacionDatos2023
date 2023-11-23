@@ -19,9 +19,9 @@
     - [Materiales CLASE 2](#materiales-clase-2)
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
-    - [Foro](#Foro)
-    - [Enlaces de Zoom](#Enlaces-de-Zoom)
-    - [Grabaciones](#Grabaciones)
+    - [Foro](#foro)
+    - [Enlaces de Zoom](#enlaces-de-zoom)
+    - [Grabaciones](#grabaciones)
    
 
 <!-- Contenido -->
