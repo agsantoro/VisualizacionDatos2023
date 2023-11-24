@@ -160,9 +160,9 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [Viernes 24/nov](https://paho-org.zoom.us/j/81894386805)
  
+[Miércoles 29/nov](https://paho-org.zoom.us/j/82797728601)
 
 <!--
-Miércoles 29/nov: https://paho-org.zoom.us/j/82797728601
 Viernes 1/dic: https://paho-org.zoom.us/j/81894386805
  
 
@@ -172,8 +172,9 @@ Viernes 8/dic: https://paho-org.zoom.us/j/81894386805
 
 Miércoles 13/dic: https://paho-org.zoom.us/j/89165491235
 Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
-
 -->
 
 ### Grabaciones
 [Miércoles 22/nov](https://paho-org.zoom.us/rec/share/gOlHDKOu1YqO4gwTGzfhKLGWm8zcIsHc3O4Jqv1s0MzKJA0R4aXhRr_xTctL4Bue.PC0g8lYgYMBPxYJj)
+
+[Viernes 24/nov](https://paho-org.zoom.us/rec/share/p9fRJmYMe7Shwe2IQ77U2ylJFRLyTz-ZBfeVsWbbaX8Wr5y9dE0I0kY2f98ybWgW.YKoXbxa1r2QpW6Wn)
