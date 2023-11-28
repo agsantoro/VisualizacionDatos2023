@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Curso Visualización" />
 
+<meta name="date" content="2023-11-28" />
 
-<title>README</title>
+<title>Actividad #1</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,257 +350,44 @@ display: none;
 
 
 
+<h1 class="title toc-ignore">Actividad #1</h1>
+<h4 class="author">Curso Visualización</h4>
+<h4 class="date">2023-11-28</h4>
 
 </div>
 
 
-<!-- Índice -->
-<div id="índice" class="section level1">
-<h1><strong>Índice:</strong></h1>
+<div id="consigna" class="section level2">
+<h2>Consigna</h2>
+<p>Actividad Nro. 1</p>
+<p>Se propone trabajar con el dataset iris incluido en el paquete base
+de R</p>
 <ol style="list-style-type: decimal">
-<li><p><a href="#programa-introducción-al-procesamiento-análisis-y-visualización-interactiva-de-datos-abiertos-en-salud">Programa:
-Introducción al procesamiento, análisis y visualización interactiva de
-datos abiertos en salud.</a></p></li>
-<li><p><a href="#requerimientos-m%C3%ADnimos-necesarios-para-este-curso">Requerimientos
-mínimos necesarios para este curso</a></p></li>
-<li><p><a href="#objetivos">OBJETIVOS</a></p></li>
-<li><p><a href="#contenidos">CONTENIDOS</a></p>
-<ol style="list-style-type: decimal">
-<li><a href="#unidad-1-acceso-y-procesamiento-de-datos-de-salud-con-r">Unidad
-1: acceso y procesamiento de datos de salud con R.</a></li>
-<li><a href="#unidad-2-indicadores-de-salud-en-r">Unidad 2: Indicadores
-de salud en R</a></li>
-<li><a href="#unidad-3-introducción-a-shiny-y-conceptos-básicos-de-visualización-de-datos">Unidad
-3: Introducción a Shiny y conceptos básicos de visualización de
-datos.</a></li>
-<li><a href="#unidad-4-visualización-interactiva-en-shiny">Unidad 4:
-Visualización interactiva en Shiny</a></li>
-<li><a href="#unidad-5-despliegue-de-la-aplicación-shiny">Unidad 5:
-Despliegue de la aplicación Shiny</a></li>
-</ol></li>
-<li><p><a href="#metodología">METODOLOGÍA</a></p></li>
-<li><p><a href="#contenido-del-repositorio">CONTENIDO DEL
-REPOSITORIO</a></p>
-<ul>
-<li><a href="#tutoriales">Tutoriales</a></li>
-<li><a href="#materiales-clase-1">Materiales CLASE 1</a></li>
-<li><a href="#materiales-clase-2">Materiales CLASE 2</a></li>
-<li><a href="#materiales-clase-3">Materiales CLASE 3</a></li>
-<li><a href="#bibliografía">Bibliografía</a></li>
-<li><a href="#enlaces-útiles">Enlaces útiles</a></li>
-<li><a href="#foro">Foro</a></li>
-<li><a href="#enlaces-de-zoom">Enlaces de Zoom</a></li>
-<li><a href="#grabaciones">Grabaciones</a></li>
-</ul></li>
+<li><p>Crear una funcion llamada
+<strong>“graficaBoxPlotEspecie”</strong> que contenga dos argumentos:
+<strong>“datos”</strong> y <strong>“especie”</strong></p></li>
+<li><p>Definir la función de tal manera que por el argumento
+<strong>“datos”</strong> ingrese el dataset Iris (inluído en el paquete
+base de R) y por el argumento “especie” el nombre de alguna de las
+especies de la variable “Species” de iris</p></li>
 </ol>
-<!-- Contenido -->
-</div>
-<div id="programa-introducción-al-procesamiento-análisis-y-visualización-interactiva-de-datos-abiertos-en-salud." class="section level1">
-<h1><strong>Programa: Introducción al procesamiento, análisis y
-visualización interactiva de datos abiertos en salud.</strong></h1>
-<p>AÑO: 2023</p>
-<p>DOCENTES: Adrián Santoro / Velén Pennini</p>
-<p>El curso está orientado a profesionales de diferentes disciplinas que
-se interesen o trabajen con estadísticas o ciencia de datos en salud y
-que cuenten con conocimientos básicos o intermedios de R.</p>
-<div id="requerimientos-mínimos-necesarios-para-este-curso" class="section level2">
-<h2>Requerimientos mínimos necesarios para este curso</h2>
-<ul>
-<li>Computadora con R y RStudio instalado y con permisos para instalar
-paquetes nuevos.</li>
-<li>Conocimientos básicos de manejo de bases de datos.</li>
-<li>Lectocomprensión del idioma inglés.</li>
-</ul>
-</div>
-<div id="objetivos" class="section level2">
-<h2><strong>OBJETIVOS</strong></h2>
-<ul>
-<li>Presentar definiciones y conceptos específicos de las principales
-fuentes de información estadísticas de salud.</li>
-<li>Describir el origen de los datos de dichas fuentes, los instrumentos
-de registro, las herramientas de clasificación que se utilizan en cada
-una, la consolidación y la integración de los datos.</li>
-<li>Conocer las alternativas de acceso y descarga de datos abiertos en
-salud desde R.</li>
-<li>Describir procedimientos y recursos en R para el procesamiento de la
-información y el cálculo de indicadores relevantes en cada fuente de
-información.</li>
-<li>Describir procedimientos y recursos en R para visualizar los datos
-procesados (tablas, gráficos, mapas).</li>
-<li>Describir el proceso de desarrollo de una visualización interactiva
-de datos con la librería Shiny y desplegarla en un servidor web.</li>
-</ul>
-</div>
-<div id="contenidos" class="section level2">
-<h2><strong>CONTENIDOS</strong></h2>
-<p>El propósito de este curso es que, al finalizarlo, cada alumno/a haya
-desarrollado una visualización utilizando el software R, basada en datos
-abiertos de salud y disponible en la web. Durante el curso, se
-enfatizará la importancia de la visualización de datos en el campo de la
-salud y se proporcionarán directrices y mejores prácticas para la
-elaboración de visualizaciones efectivas. Los participantes tendrán la
-oportunidad de aplicar estos conceptos en la creación de sus propias
-aplicaciones en Shiny. Aprenderán a diseñar la interfaz de usuario,
-agregar elementos interactivos, vincularlos a los datos procesados y
-finalmente desplegar su propia aplicación Shiny en un servidor web.</p>
-<div id="unidad-1-acceso-y-procesamiento-de-datos-de-salud-con-r." class="section level3">
-<h3>Unidad 1: acceso y procesamiento de datos de salud con R.</h3>
-<p>Introducción a los datos abiertos en salud. Descripción de los datos
-de estadísticas vitales y vigilancia epidemiológica y su utilidad en la
-salud pública. Carga y exploración inicial de conjuntos de datos de
-salud en R.</p>
-</div>
-<div id="unidad-2-indicadores-de-salud-en-r" class="section level3">
-<h3>Unidad 2: Indicadores de salud en R</h3>
-<p>Generación de indicadores de salud en R: Estadísticas vitales: tasas
-de mortalidad brutas y ajustadas. Tasas de mortalidad específicas por
-grupos de edad y por causa. Razón de mortalidad materna. Mortalidad
-Infantil. Mortalidad proporcional. Datos de vigilancia epidemiológica:
-incidencia y prevalencia. Letalidad. Tasa de notificación. Otros
-indicadores de salud.</p>
-</div>
-<div id="unidad-3-introducción-a-shiny-y-conceptos-básicos-de-visualización-de-datos." class="section level3">
-<h3>Unidad 3: Introducción a Shiny y conceptos básicos de visualización
-de datos.</h3>
-<p>Introducción a Shiny: ¿qué es y cómo funciona? Configuración del
-entorno de desarrollo en RStudio. Diseño de la interfaz de usuario en
-Shiny. Elementos básicos de Shiny: inputs, outputs y <em>reactives</em>.
-Incorporación de elementos interactivos en la aplicación Shiny.
-Utilización de paquetes para generar visualizaciones interactivas.
-Buenas prácticas en la elaboración de gráficos. Tipos de gráficos según
-tipo de datos a representar Ejercicio práctico: crear una aplicación
-Shiny básica con elementos interactivos.</p>
-</div>
-<div id="unidad-4-visualización-interactiva-en-shiny" class="section level3">
-<h3>Unidad 4: Visualización interactiva en Shiny</h3>
-<p>Importación y manipulación de datos de salud y epidemiología.
-Preparación de los datos para su visualización en la aplicación Shiny.
-Ejercicio práctico: preparar y visualizar datos de salud en la
-aplicación Shiny.</p>
-</div>
-<div id="unidad-5-despliegue-de-la-aplicación-shiny" class="section level3">
-<h3>Unidad 5: Despliegue de la aplicación Shiny</h3>
-<p>Opciones de despliegue de aplicaciones Shiny. Configuración de una
-cuenta en shiny</p>
-</div>
-</div>
-<div id="metodología" class="section level2">
-<h2><strong>METODOLOGÍA</strong></h2>
-<p>El curso se desarrollará de manera virtual y sincrónica. Se abordarán
-los contenidos de forma práctica con el propósito de reproducir las
-diferentes fases en el desarrollo de una visualización interactiva de
-datos (acceso a la información, procesamiento, análisis, visualización,
-despliegue).</p>
-<!--
-## **REQUISITOS PARA LA APROBACIÓN DE LA MATERIA**
-
-### EVALUACIÓN
-Para la aprobación de la asignatura es necesario cumplimentar el 80% de asistencia a las actividades sincrónicas, tener aprobados todos los Trabajos Prácticos y una evaluación final.
-### ASISTENCIA A CLASES
-El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
-
--->
-</div>
-<div id="contenido-del-repositorio" class="section level2">
-<h2><strong>CONTENIDO DEL REPOSITORIO</strong></h2>
-<div id="tutoriales" class="section level3">
-<h3>Tutoriales</h3>
-<p><a href="https://agsantoro.github.io/untref2023/RMD/RMD002Tutorial/Tutorial1.html">Tutoriales
-RStudio y GIT</a></p>
-<p><a href="https://presenciales.untref.edu.ar/acceso.cgi">Campus
-virtual</a></p>
-</div>
-<div id="materiales-clase-1" class="section level3">
-<h3>Materiales CLASE 1</h3>
-<p><a href="https://agsantoro.github.io/untref2023/PPT/ppt1.html">PPT1</a>
-<!-- 
-[PPT2](https://agsantoro.github.io/untref2023/PPT/ppt2.html) 
---></p>
-</div>
-<div id="materiales-clase-2" class="section level3">
-<h3>Materiales CLASE 2</h3>
-<p><a href="https://agsantoro.github.io/untref2023/RMD/RMD001_Poblacion/01_ProyeccionesDePoblacion.html">Procesamiento
-de datos de población (jurisdicciones)</a></p>
-<p><a href="https://agsantoro.github.io/untref2023/RMD/RMD004_Deptos/03_ProyeccionesDepartamentos.html">Procesamiento
-de datos de población (departamentos)</a></p>
-<p><a href="https://agsantoro.github.io/untref2023/RMD/RMD003_Analisis/analisis_snvs.html">Analisis
-de Eventos de Notificación Obligatoria</a></p>
-</div>
-<div id="materiales-clase-3" class="section level3">
-<h3>Materiales CLASE 3</h3>
-<p><a href="https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD005_Tasas/RMD005_tasas.html">Procesamiento
-de datos de mortalidad y cálculo de tasas en lote</a></p>
-<p><a href="https://agsantoro.github.io/VisualizacionDatos2023/Actividades/act1.html">Actividad
-#1 (Funciones)</a></p>
-<!--
-### Materiales CLASE 4
-[PPT3](https://agsantoro.github.io/untref2023/PPT/ppt3.html)
-
-[Practica en shiny 1](https://agsantoro.github.io/untref2023/RMD/RMD006_Practica1/practica_1.html)
-
-[Grabación clase 4](https://drive.google.com/file/d/13t-PJ7m14ewaOJKyMTA7cFNkvIbIMM69/view)
-
-### Materiales CLASE 5
-
-[Tutorial despliegue ShinnyApps](https://agsantoro.github.io/untref2023/RMD/RMD002Tutorial/Tutorial2.html)
-
-[Grabación clase 5](https://drive.google.com/file/d/1CRTpq6H-lcKGLGDsKj-KwNzTNDdxz6Qe/view)
-
-### Materiales CLASE 6
-
-[Grabación clase 6 (parte 1)](https://drive.google.com/file/d/1DameceF-oeyvqnDX75WfPaid3huEZKG8/view)
-
-[Grabación clase 6 (parte 2)](https://drive.google.com/file/d/1wjGSE1L8k4DvevYg4JQ1NtWQshGEVszI/view)
--->
-</div>
-<div id="bibliografía" class="section level3">
-<h3>Bibliografía</h3>
-<p><a href="https://iris.paho.org/bitstream/handle/10665.2/34492/9789275319819-spa.pdf?sequence=7&amp;isAllowed=y">Lineamientos
-Básicos para el Análisis de la mortalidad</a></p>
-</div>
-<div id="enlaces-útiles" class="section level3">
-<h3>Enlaces útiles</h3>
-<p><a href="https://www.argentina.gob.ar/salud/deis/reporte-interactivo">Reporte
-interactivo de estadísticas de salud -DEIS</a></p>
-<p><a href="https://www.highcharts.com/blog/tutorials/highcharts-for-r-users/">Highcharts
-for R users</a></p>
-<p><a href="https://docs.google.com/spreadsheets/d/1tol7FcFKQYHLMx0Zh9hqCG8IkqJdD79WSsdAJTlOJ0E/edit#gid=0">Google
-Sheet de la clase</a></p>
-<p><a href="https://github.com/rstudio/cheatsheets/raw/main/shiny.pdf">shiny::
-CHEAT SHEET Descarga</a></p>
-</div>
-<div id="foro" class="section level3">
-<h3>Foro</h3>
-<p><a href="https://github.com/agsantoro/VisualizacionDatos2023/discussions">Foro</a></p>
-</div>
-<div id="enlaces-de-zoom" class="section level3">
-<h3>Enlaces de Zoom</h3>
-<p><a href="https://paho-org.zoom.us/j/82797728601">Miércoles
-22/nov</a></p>
-<p><a href="https://paho-org.zoom.us/j/81894386805">Viernes
-24/nov</a></p>
-<p><a href="https://paho-org.zoom.us/j/82797728601">Miércoles
-29/nov</a></p>
-<!--
-Viernes 1/dic: https://paho-org.zoom.us/j/81894386805
- 
-
-Miércoles 6/dic: https://paho-org.zoom.us/j/82797728601
-Viernes 8/dic: https://paho-org.zoom.us/j/81894386805
- 
-
-Miércoles 13/dic: https://paho-org.zoom.us/j/89165491235
-Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
--->
-</div>
-<div id="grabaciones" class="section level3">
-<h3>Grabaciones</h3>
-<p><a href="https://paho-org.zoom.us/rec/share/gOlHDKOu1YqO4gwTGzfhKLGWm8zcIsHc3O4Jqv1s0MzKJA0R4aXhRr_xTctL4Bue.PC0g8lYgYMBPxYJj">Miércoles
-22/nov</a></p>
-<p><a href="https://paho-org.zoom.us/rec/share/p9fRJmYMe7Shwe2IQ77U2ylJFRLyTz-ZBfeVsWbbaX8Wr5y9dE0I0kY2f98ybWgW.YKoXbxa1r2QpW6Wn">Viernes
-24/nov</a></p>
-</div>
-</div>
+<pre class="r"><code>head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>El objetivo de la función es que devuelva el box-plot de la variable
+SepaL.Length de una especie (por ejemplo, “setosa”)</li>
+</ol>
+<p>Una vez completada la actividad correctamente, el siguiente comando
+debería devolver el box-plot de la variable Sepal.Length del conjunto de
+flores de especie Setosa:</p>
+<pre class="r"><code>graficaBoxPlotEspecie(iris,&quot;setosa&quot;)</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAAtFBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZrY6AAA6OgA6Ojo6ZmY6ZpA6ZrY6kNtmAABmOgBmOjpmZjpmZmZmZpBmkJBmkLZmkNtmtttmtv+QOgCQZgCQZjqQZmaQtraQttuQ2/+2ZgC2Zjq2kDq2kGa2kLa2tpC2tra2ttu229u22/+2///T09PbkDrbkGbbtmbbtpDbtrbb27bb29vb2//b////tmb/25D/27b/29v//7b//9v///8H9mGYAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAXmElEQVR4nO3da3dbRZqGYZmTe9JAMm56mjAzTegwSWCGJgkkAfn//6+RbHyAAvrVQxWqMtf1haCF9sryevaNDlvW5hyAyObYfwGAVQkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUJzB3QD0E3/RHU/YkfH/mkDd0v3RvU+YE8D/ocB/GEJKEBIQAFCAgoQElCAkIAChAQUICSgACEB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BBRahkKJgELLUCgRUGgZCiUCCi1DoURAoWUolAgotAyFEgGFlqFQIqDQMhRKBBRahkKJgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUGgZCiUCCi1DoURAoWUolAgotAyFEgGFlqFQIqDQMhRKBBRahkKJgLKYzV1y7B8mv5GAspZjJ6+vY/80+Y0EFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQn+4gAL0071RvQ/Y07F/2MDd0r1RvQ8I8EchoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUI/T9eJDDwiIpyEQAAAABJRU5ErkJggg==" width="672" /></p>
 </div>
 
 

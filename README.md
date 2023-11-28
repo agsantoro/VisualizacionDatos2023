@@ -17,6 +17,7 @@
     - [Tutoriales](#tutoriales)
     - [Materiales CLASE 1](#materiales-clase-1)
     - [Materiales CLASE 2](#materiales-clase-2)
+    - [Materiales CLASE 3](#materiales-clase-3)
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#foro)
@@ -113,12 +114,14 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [Analisis de Eventos de Notificación Obligatoria](https://agsantoro.github.io/untref2023/RMD/RMD003_Analisis/analisis_snvs.html)
 
-<!--
+
 ### Materiales CLASE 3
-[Procesamiento de datos de mortalidad y cálculo de tasas en lote](https://agsantoro.github.io/untref2023/RMD/RMD005_Tasas/RMD005_tasas.html)
+[Procesamiento de datos de mortalidad y cálculo de tasas en lote](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD005_Tasas/RMD005_tasas.html)
 
-[Grabación clase 3](https://drive.google.com/file/d/1FAyyaD-QBgcEt3Z7tqNKqueq2LcDo-rD/view?usp=sharing)
+[Actividad #1 (Funciones)](https://agsantoro.github.io/VisualizacionDatos2023/Actividades/act1.html)
 
+
+<!--
 ### Materiales CLASE 4
 [PPT3](https://agsantoro.github.io/untref2023/PPT/ppt3.html)
 
