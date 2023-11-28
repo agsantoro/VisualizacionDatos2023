@@ -110,19 +110,20 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 ### Materiales CLASE 2
 [Procesamiento de datos de población (jurisdicciones)](https://agsantoro.github.io/untref2023/RMD/RMD001_Poblacion/01_ProyeccionesDePoblacion.html)
 
-[Procesamiento de datos de población (departamentos)](https://agsantoro.github.io/untref2023/RMD/RMD004_Deptos/03_ProyeccionesDepartamentos.html)
-
 [Analisis de Eventos de Notificación Obligatoria](https://agsantoro.github.io/untref2023/RMD/RMD003_Analisis/analisis_snvs.html)
 
 
 ### Materiales CLASE 3
-[Procesamiento de datos de mortalidad y cálculo de tasas en lote](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD005_Tasas/RMD005_tasas.html)
+[Procesamiento de datos de población (departamentos)](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD004_Deptos/03_ProyeccionesDepartamentos.html)
 
 [Actividad #1 (Funciones)](https://agsantoro.github.io/VisualizacionDatos2023/Actividades/act1.html)
 
 
 <!--
 ### Materiales CLASE 4
+
+[Procesamiento de datos de mortalidad y cálculo de tasas en lote](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD005_Tasas/RMD005_tasas.html)
+
 [PPT3](https://agsantoro.github.io/untref2023/PPT/ppt3.html)
 
 [Practica en shiny 1](https://agsantoro.github.io/untref2023/RMD/RMD006_Practica1/practica_1.html)
