@@ -116,10 +116,10 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 ### Materiales CLASE 3
 [Procesamiento de datos de población (departamentos)](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD004_Deptos/03_ProyeccionesDepartamentos.html)
 
-[Actividad #1 (Funciones)](https://agsantoro.github.io/VisualizacionDatos2023/Actividades/act1.html)
 
 [Analisis de datos epidemiologicos](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD003_Analisis/analisis_snvs.html)
 
+[Actividad #1 (Funciones)](https://agsantoro.github.io/VisualizacionDatos2023/Actividades/act1.html)
 
 <!--
 ### Materiales CLASE 4
