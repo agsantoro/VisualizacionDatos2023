@@ -60,6 +60,7 @@ instalar("ggspatial")
 instalar("readxl")
 instalar("hrbrthemes")
 instalar("plotly")
+instalar("tsibble")
 ```
 
 # Lectura de los datos 
@@ -364,7 +365,8 @@ También puedo usar la fn hc_credits() para agreagar la fuente.
 grafico %>% 
   hc_credits(enabled = TRUE, 
              text = "Fuente: Datos abiertos:https://datos.gob.ar/",
-             style = list(fontSize = "10px")) %>% 
+             style = list(fontSize = "10px")) %>%
+  hc_exporting(enabled=T) %>% 
   hc_add_theme(hc_theme_google())
 ```
 
