@@ -158,6 +158,10 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [shiny:: CHEAT SHEET Descarga](https://github.com/rstudio/cheatsheets/raw/main/shiny.pdf)
 
+[From R to interactive charts and maps](https://paldhous.github.io/NICAR/2017/r-to-javascript.html)
+
+[Fundamentals of Data Visualization - Claus O. Wilke](https://clauswilke.com/dataviz/)
+
 ### Foro
 [Foro](https://github.com/agsantoro/VisualizacionDatos2023/discussions)
 
