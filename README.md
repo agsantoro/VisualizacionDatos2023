@@ -169,13 +169,12 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
  
 [Miércoles 29/nov](https://paho-org.zoom.us/j/82797728601)
 
+[Viernes 1/dic](https://paho-org.zoom.us/j/81894386805)
+
 <!--
-Viernes 1/dic: https://paho-org.zoom.us/j/81894386805
- 
 
 Miércoles 6/dic: https://paho-org.zoom.us/j/82797728601
 Viernes 8/dic: https://paho-org.zoom.us/j/81894386805
- 
 
 Miércoles 13/dic: https://paho-org.zoom.us/j/89165491235
 Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
