@@ -186,3 +186,6 @@ Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
 [Viernes 24/nov](https://paho-org.zoom.us/rec/share/p9fRJmYMe7Shwe2IQ77U2ylJFRLyTz-ZBfeVsWbbaX8Wr5y9dE0I0kY2f98ybWgW.YKoXbxa1r2QpW6Wn)
 
 [Miercoles 30/nov](https://paho-org.zoom.us/rec/play/x5MgapEZcxrDqvlH1-nnhOil8oNi-WvNsB5CosdhBHbcvDg7BMAEeKpBo76VgQoq2nJzZ3h9TVxVi8k.r4-Hv9pIiOkeCKBa?canPlayFromShare=true&from=share_recording_detail&continueMode=true&componentName=rec-play&originRequestUrl=https%3A%2F%2Fpaho-org.zoom.us%2Frec%2Fshare%2F7Vz1RAVUQJliiyHfxsGCVEA62AFW_2T4t2RdecwUusQ3QWUo6iiTq0kvAta2ZMdZ.dHbDcutGNsBoH3Tc)
+
+[Viernes 1/dic](https://paho-org.zoom.us/rec/share/P1m3Fxz8wYZuW8j0K4s9IhaVU-G14EvZ31-3f4raNVuvDqm4fkoTxGvfdBfEeiII.AGi5ORWD3zHUtFhZ)
+
