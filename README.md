@@ -163,6 +163,7 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 [Foro](https://github.com/agsantoro/VisualizacionDatos2023/discussions)
 
 ### Enlaces de Zoom
+
 [Miércoles 22/nov](https://paho-org.zoom.us/j/82797728601)
 
 [Viernes 24/nov](https://paho-org.zoom.us/j/81894386805)
@@ -170,6 +171,8 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 [Miércoles 29/nov](https://paho-org.zoom.us/j/82797728601)
 
 [Viernes 1/dic](https://paho-org.zoom.us/j/81894386805)
+
+[Miércoles 6/dic](https://paho-org.zoom.us/j/82797728601)
 
 <!--
 
