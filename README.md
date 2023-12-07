@@ -118,6 +118,16 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [Actividad #1 (Funciones)](https://agsantoro.github.io/VisualizacionDatos2023/Actividades/act1.html)
 
+### Materiales CLASE 4
+
+[PPT3](https://agsantoro.github.io/VisualizacionDatos2023/PPT/ppt3.html)
+
+### Materiales CLASE 5
+
+[PPT3](https://agsantoro.github.io/VisualizacionDatos2023/PPT/ppt3.html)
+
+[Widget Gallery](https://shiny.posit.co/r/gallery/widgets/widget-gallery/)
+
 <!--
 ### Materiales CLASE 4
 
