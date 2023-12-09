@@ -20,7 +20,7 @@
     - [Materiales CLASE 3](#materiales-clase-3)
     - [Materiales CLASE 4](#materiales-clase-4)
     - [Materiales CLASE 5](#materiales-clase-5)
-    - [Materiales CLASE 6 (ASINCRONICA)](#materiales-clase-5-(asincronica))
+    - [Materiales CLASE 6 (ASINCRONICA)](#materiales-clase-5-asincronica)
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#foro)
