@@ -129,6 +129,8 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [PPT3](https://agsantoro.github.io/VisualizacionDatos2023/PPT/ppt3.html)
 
+[Actividad #2](https://gist.github.com/agsantoro/229b4105937ab44bb99f9a7dd29c2da7)
+
 [Widget Gallery](https://shiny.posit.co/r/gallery/widgets/widget-gallery/)
 
 ### Materiales CLASE 6 (ASINCRONICA)
@@ -141,7 +143,7 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [Código - Visualización](https://gist.github.com/agsantoro/1ad7195194814ce90b02c604cbca56c1)
 
-#### Actividad #2
+#### Actividad #3
 
 A - Diseño
 
@@ -169,6 +171,8 @@ B- Reactives
 [Tutorial despliegue ShinnyApps](https://agsantoro.github.io/untref2023/RMD/RMD002Tutorial/Tutorial2.html)
 
 [Grabación clase 5](https://drive.google.com/file/d/1CRTpq6H-lcKGLGDsKj-KwNzTNDdxz6Qe/view)
+
+
 
 ### Materiales CLASE 6
 
