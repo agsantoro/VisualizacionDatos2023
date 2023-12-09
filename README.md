@@ -20,6 +20,7 @@
     - [Materiales CLASE 3](#materiales-clase-3)
     - [Materiales CLASE 4](#materiales-clase-4)
     - [Materiales CLASE 5](#materiales-clase-5)
+    - [Materiales CLASE 6 (ASINCRONICA)](#materiales-clase-5-(asincronica))
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#foro)
@@ -129,6 +130,26 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 [PPT3](https://agsantoro.github.io/VisualizacionDatos2023/PPT/ppt3.html)
 
 [Widget Gallery](https://shiny.posit.co/r/gallery/widgets/widget-gallery/)
+
+### Materiales CLASE 5 (ASINCRONICA)
+
+[Video - parte 1](https://drive.google.com/file/d/10Y6UQ4h0sSw7oVdrm-kvDIzBkDzS19qx/view?usp=sharing)
+
+[Video - parte 2](https://drive.google.com/file/d/1_CjWHQtp818SSY7_vJiGxm31cKBtQYu9/view?usp=sharing)
+
+[Código - Procesamiento de datos](https://gist.github.com/agsantoro/f0b6dd92478cc314c9bb68c70bbe3359)
+
+[Código - Visualización](https://gist.github.com/agsantoro/1ad7195194814ce90b02c604cbca56c1)
+
+Actividad #2
+
+A - Diseño
+    1- Reproducir la aplicación compartida de forma local.
+    2- Eliminar el estilo css que se asignó a la primera fila.
+    3- Ingresar a https://rstudio.github.io/shinythemes/ y aplicar un tema a la aplicación. 
+
+B- Reactives
+    1- Modificar el reactive "datos_filtrados" para que devuelva los valores de la tasa de mortalidad infantil sin decimales y los nombres de las jurisdicciones en mayúsculas.
 
 <!--
 ### Materiales CLASE 4
