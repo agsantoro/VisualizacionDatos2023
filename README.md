@@ -141,14 +141,16 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [Código - Visualización](https://gist.github.com/agsantoro/1ad7195194814ce90b02c604cbca56c1)
 
-Actividad #2
+#### Actividad #2
 
 A - Diseño
+
     1- Reproducir la aplicación compartida de forma local.
     2- Eliminar el estilo css que se asignó a la primera fila.
     3- Ingresar a https://rstudio.github.io/shinythemes/ y aplicar un tema a la aplicación. 
 
 B- Reactives
+
     1- Modificar el reactive "datos_filtrados" para que devuelva los valores de la tasa de mortalidad infantil sin decimales y los nombres de las jurisdicciones en mayúsculas.
 
 <!--
