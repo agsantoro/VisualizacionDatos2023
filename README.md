@@ -20,7 +20,7 @@
     - [Materiales CLASE 3](#materiales-clase-3)
     - [Materiales CLASE 4](#materiales-clase-4)
     - [Materiales CLASE 5](#materiales-clase-5)
-    - [Materiales CLASE 6 (ASINCRONICA)](#materiales-clase-5-asincronica)
+    - [Materiales CLASE 6 (ASINCRONICA)](#materiales-clase-6-asincronica)
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#foro)
@@ -131,7 +131,7 @@ El alumno debe cumplimentar el 80% de asistencia a las clases teóricas.
 
 [Widget Gallery](https://shiny.posit.co/r/gallery/widgets/widget-gallery/)
 
-### Materiales CLASE 5 (ASINCRONICA)
+### Materiales CLASE 6 (ASINCRONICA)
 
 [Video - parte 1](https://drive.google.com/file/d/10Y6UQ4h0sSw7oVdrm-kvDIzBkDzS19qx/view?usp=sharing)
 
