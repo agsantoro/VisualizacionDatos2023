@@ -213,6 +213,8 @@ B- Reactives
 
 [Miércoles 6/dic](https://paho-org.zoom.us/j/82797728601)
 
+[Miércoles 13/dic](https://paho-org.zoom.us/j/89165491235)
+
 <!--
 Miércoles 6/dic: https://paho-org.zoom.us/j/82797728601
 Viernes 8/dic: https://paho-org.zoom.us/j/81894386805
