@@ -215,7 +215,7 @@ B- Reactives
 
 [Miércoles 13/dic](https://paho-org.zoom.us/j/89165491235)
 
-[Miércoles 13/dic](https://meet.google.com/pwe-prtd-vdp)
+[Viernes 15/dic](https://meet.google.com/pwe-prtd-vdp)
 
 
 ### Grabaciones
