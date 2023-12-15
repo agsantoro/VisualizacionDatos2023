@@ -215,13 +215,8 @@ B- Reactives
 
 [Miércoles 13/dic](https://paho-org.zoom.us/j/89165491235)
 
-<!--
-Miércoles 6/dic: https://paho-org.zoom.us/j/82797728601
-Viernes 8/dic: https://paho-org.zoom.us/j/81894386805
+[Miércoles 13/dic](https://meet.google.com/pwe-prtd-vdp)
 
-Miércoles 13/dic: https://paho-org.zoom.us/j/89165491235
-Viernes 15/dic: https://paho-org.zoom.us/j/81894386805
--->
 
 ### Grabaciones
 [Miércoles 22/nov](https://paho-org.zoom.us/rec/share/gOlHDKOu1YqO4gwTGzfhKLGWm8zcIsHc3O4Jqv1s0MzKJA0R4aXhRr_xTctL4Bue.PC0g8lYgYMBPxYJj)
