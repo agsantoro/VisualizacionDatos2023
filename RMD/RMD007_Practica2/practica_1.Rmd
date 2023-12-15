@@ -1,0 +1,278 @@
+---
+title: "Clase práctica"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cosmo
+    toc: yes
+    toc_float:
+      collapsed: false
+---
+![](images/logo.jpeg){width=30%}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r echo=FALSE, include=FALSE}
+library(klippy)
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(color = 'darkred', tooltip_message = 'Click to copy', tooltip_success = 'Done',position = c('top', 'right'))
+```
+
+
+
+En esta oprtunidad les proponemos utilizar el dataset de Tasas de Mortalidad Infantil (TMI) disponible en [datos abiertos](https://datos.gob.ar/dataset/salud-tasa-mortalidad-infantil) para elaborar un app en Shiny `r emoji::emoji("frog")`. Queremos que la app muestre un gráfico realizado con el paquete *highcharter*  y que permita seleccionar la o las provincias que quiero visualizar en el gráfico desde un panel lateral con una caja de selección múltiple. 
+
+![Captura de la app para practica 1](images/Captura1.png){width=60%}
+
+## Lectura del dataset
+
+Para que puedan generar esta visualización les compartimos un avance de este trabajo. 
+
+En primer lugar, con el siguiente código podrán activar los paquetes que vamos a utilizar y descargar el dataset con los datos con los que vamos a trabajar:
+
+```{r datos}
+library(shiny)
+library(tidyverse)
+library(tidyr)
+library(DT)
+library(lubridate)
+library(shinyWidgets)
+library(highcharter)
+
+#descargo el dataset 
+
+options(timeout=1000000) # incrementamos el timeout debido a que la descarga es lenta
+
+url = "http://datos.salud.gob.ar/dataset/2eff770c-1c2b-4a22-9281-c3b5e9412086/resource/c1253897-d507-41f7-a3e1-6ed756e7243b/download/tasa-mortalidad-infantil-deis-1990-2021.csv"
+
+download.file(url, destfile = "TMI.csv")
+
+data = read.csv("TMI.csv")
+unlink("TMI.csv")
+
+DT::datatable(data)
+```
+
+## Procesamiento de los datos
+
+Copiando el código a continuación podrán procesar los datos de modo que queden listos para graficarlos`r emoji::emoji("muscle")`. 
+Recuerden que pueden dejar el código para el procesamiento en el mismo *.R* de la app.
+
+```{r procesamiento}
+###proceso los datos para graficar
+bd <- data %>% pivot_longer(
+  cols = !indice_tiempo,
+  names_to = "prov",
+  values_to = "TMI"
+) %>%
+  mutate(
+    prov = str_sub(prov, 21, nchar(prov)),
+    ano = year(ymd(indice_tiempo)),
+    indice_tiempo = ymd(indice_tiempo),
+    prov=case_when(prov == "cordoba" ~ str_to_title(prov),
+                   prov == "caba"  ~ "CABA",
+                   prov == "argentina" ~ str_to_title(prov),
+                   prov == "corientes" ~ str_to_title(prov),
+                   prov == "chaco" ~ str_to_title(prov),
+                   prov == "chubut" ~ str_to_title(prov),
+                   prov == "neuquen" ~ str_to_title(prov),
+                   prov == "misiones" ~ str_to_title(prov),
+                   prov == "jujuy" ~ str_to_title(prov),
+                   prov == "catamarca" ~ str_to_title(prov),
+                   prov == "corrientes" ~ str_to_title(prov),
+                   prov == "formosa" ~ str_to_title(prov),
+                   prov == "salta" ~ str_to_title(prov),
+                   prov == "buenosaires" ~ "Buenos Aires",
+                   prov == "santiagodelestero" ~ "Santiago del Estero",
+                   prov == "santafe" ~ "Santa Fe",
+                   prov == "tierradelfuego" ~ "Tierra del Fuego",
+                   prov == "santacruz" ~ "Santa Cruz",
+                   prov == "sanjuan" ~ "San Juan",
+                   prov == "sanluis" ~ "San Luis",
+                   prov == "lapampa" ~ "La Pampa",
+                   prov == "larioja" ~ "La Rioja",
+                   prov == "entrerios" ~ "Entre Rios",
+                   prov == "rionegro" ~ "Rio Negro",
+                   TRUE ~ prov  # Mantén el valor original para otros casos
+    )
+  ) %>% 
+  select(-indice_tiempo)
+
+DT::datatable(bd)
+```
+
+## Grafico en *highcharter*
+
+El código a continuación contienen un ejemplo de como pueden amar el gráfico que luego tendrán que incluir en su app de Shiny. En la primer linea se define un vector con las provincias que quiero incorporar para realizar el gráfico. 
+
+`r emoji::emoji("pushpin")`Cuando trabajen con la app de Shiny este vector deberá ser remplazado por las provincias que se seleccionen en la caja del panel lateral. 
+ 
+`r emoji::emoji("point_down")`Al final podrán ver un ejemplo del objetivo al que queremos llegar`r emoji::emoji("point_down")` 
+
+```{r}
+# defino que provincias quiero incluir en la lista a continuación
+input <-
+  c("CABA", "Buenos Aires", "Cordoba", "Entre Rios", "Neuquen")
+# filto mi dataset segun este vector de provincias seleccionadas
+bd <- bd %>% filter(prov %in% input)
+
+# listo los niveles que la variables prov
+niveles_prov <- unique(bd$prov)
+
+# armo el grafico con highchart
+hc <- highchart() %>%
+  hc_chart(type = "line") %>%
+  hc_title(text = "Serie de tiempo de TMI por 1000 nacidos vivos, Argentina, periodo 1990-2021") %>%
+  hc_xAxis(title = list(text = "Año")) %>%
+  hc_yAxis(title = list(text = "TMI ")) %>%
+  hc_exporting(enabled = TRUE) # enable exporting option
+
+
+# Agrega una serie de datos para cada nivel de "prov"
+for (nivel in niveles_prov) {
+  data_serie <- bd[bd$prov == nivel,]
+  hc <- hc %>%
+    hc_add_series(
+      data_serie,
+      "line",
+      hcaes(x = ano, y = TMI),
+      name = nivel,
+      marker = list(radius = 4)
+    )
+}
+
+## imprimo el grafico
+#print(hc)
+hc
+
+```
+
+## `r emoji::emoji("hatching_chick")` Primer desafío
+
+Por último, los desafiamos a armar la Shinyapp`r emoji::emoji("exclamation")`
+Le dejamos a continuación la estructura.
+Recuerden que el paquete *highcharter* tiene las funciones especificas de 
+      
+        
+        highchartOutput() ## para el UI
+        renderHighchart() ## para el server
+        
+Estructura de la app:
+
+```{r eval=FALSE}
+
+# Defino UI para mi aplicación
+ui <- fluidPage(
+  # Titulo
+  titlePanel("Mortalidad infantil en Argentina")
+  )
+
+
+# Defino server
+server <- function(input, output) {
+  
+ 
+}
+
+# Corro la application
+shinyApp(ui = ui, server = server)
+```
+
+## Ejemplo del objetivo
+
+```{r echo=FALSE}
+webshot::install_phantomjs()
+knitr::include_app("https://velenpennini.shinyapps.io/practica1/", height = 650)
+
+```
+`r emoji::emoji("four_leaf_clover")`Buena suerte`r emoji::emoji("four_leaf_clover")` 
+
+
+## `r emoji::emoji("chicken")` Segundo desafío
+
+
+Ahora veamos la siguiente tabla hecha con el paquete GT. 
+
+ - Explorar el codigo con el que esta hecha la tabla. Intentar comprender sus partes. Modificar aspectos esteticos si así lo prefieren, como por ejemplo, orden de las columnas, colores, etc. 
+ - Insertar la tabla en la app desarrollada en el punto anterior. IMPORTANTE`r emoji::emoji("danger")`Hacerlo con un reactive
+
+
+
+```{r}
+
+library(gt)
+library(gtExtras)
+library(sparkline)
+library(svglite)
+
+gt_tbl <-
+      bd %>% 
+      mutate(Jurisdicción=prov) %>% 
+      dplyr::group_by(Jurisdicción) %>%
+      dplyr::summarize(
+        `Año 1990`=TMI[ano==1990],
+        `Año 2021`=TMI[ano==2021],
+        `Cambio %`= round((`Año 2021`-`Año 1990`)/`Año 1990`*100,1),
+        Tendencia = list(TMI),
+        .groups = "drop") %>%
+      
+      arrange(desc(`Año 2021`)) %>%
+      gt() %>%
+      gt_plt_sparkline(Tendencia,
+                       type="shaded",
+                       label=F,
+                       fig_dim = c(10,30),
+                       same_limit = F
+      ) %>% 
+      data_color( # Update cell colors...
+        columns = c(`Año 2021`), # ...for Mass column 
+        colors = scales::col_numeric( # <- bc it's numeric
+          palette = c(
+            "yellow", "orange", "red"), # A color scheme (gradient)
+          domain = c(4, 11.7) # Column scale endpoints
+        )  ) %>% 
+      tab_spanner(
+        label = "Años",
+        columns = 2:3
+      ) %>% 
+      tab_header(
+        title = "Tendencia en la mortalidad infantil",
+        subtitle = "Por provincia periodo 1990-2021 (cada 1000 nacidos vivos)"
+      ) %>% 
+      tab_options(
+        heading.subtitle.font.size = 12,
+        heading.align = "left",
+        table.border.top.color = "black",
+        column_labels.border.bottom.color = "black",
+        column_labels.border.bottom.width= px(3)
+      ) %>% 
+      gt_highlight_rows(
+        rows = Jurisdicción=="Argentina", # relasto la fila del total pais
+        fill = "lightgrey",
+        bold_target_only = TRUE,
+        target_col = Jurisdicción
+      ) %>% 
+      #le agrego la interaccion
+      opt_interactive(
+        use_search = TRUE,
+        use_resizers = TRUE,
+        use_highlight = TRUE,
+        use_compact_mode = T,
+        use_text_wrapping = FALSE,
+        page_size_default= 25
+      )
+    
+    gt_tbl
+```
+
+
+
