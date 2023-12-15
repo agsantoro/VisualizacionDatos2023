@@ -21,6 +21,7 @@
     - [Materiales CLASE 4](#materiales-clase-4)
     - [Materiales CLASE 5](#materiales-clase-5)
     - [Materiales CLASE 6 (ASINCRONICA)](#materiales-clase-6-asincronica)
+    - [Materiales CLASE 8](#materiales-clase-8)
     - [Bibliografía](#bibliografía)
     - [Enlaces útiles](#enlaces-útiles)
     - [Foro](#foro)
@@ -154,6 +155,12 @@ A - Diseño
 B- Reactives
 
     1- Modificar el reactive "datos_filtrados" para que devuelva los valores de la tasa de mortalidad infantil sin decimales y los nombres de las jurisdicciones en mayúsculas.
+
+
+### Materiales CLASE 5
+
+
+[PRACTICA 2](https://agsantoro.github.io/VisualizacionDatos2023/RMD007_Practica2/practica_1.html)
 
 <!--
 ### Materiales CLASE 4
