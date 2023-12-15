@@ -160,7 +160,7 @@ B- Reactives
 ### Materiales CLASE 5
 
 
-[PRACTICA 2](https://agsantoro.github.io/VisualizacionDatos2023/RMD007_Practica2/practica_1.html)
+[PRACTICA 2](https://agsantoro.github.io/VisualizacionDatos2023/RMD/RMD007_Practica2/practica_1.html)
 
 <!--
 ### Materiales CLASE 4
